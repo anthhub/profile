@@ -23,7 +23,7 @@ function getColor() {
 }
 
 export default function Article() {
-  const { repo = {}, loading } = useMetadata();
+  const { repo, loading } = useMetadata();
 
   console.log({ repo });
 
@@ -33,10 +33,10 @@ export default function Article() {
       return;
     }
 
-    const home = document.querySelector(`.${styles.home}`);
+    const home = document.querySelector(`.${styles.home}`) as HTMLElement;
 
     setTimeout(() => {
-      const dom = document.querySelector("#" + hash);
+      const dom = document.querySelector("#" + hash) as HTMLElement;
       if (!home || !dom) {
         return;
       }
@@ -47,20 +47,21 @@ export default function Article() {
 
   return (
     <div className={styles.article}>
-      {Object.keys(repo).map((key) => {
-        const arr = repo[key];
-        return (
-          <div className={styles.paragraph} key={key}>
-            <h1>{key}</h1>
-            <ol className={styles.list}>
-              {!loading &&
-                arr?.map((item: Repo) => (
-                  <MyItemBlock item={item} key={item.name} />
-                ))}
-            </ol>
-          </div>
-        );
-      })}
+      {repo &&
+        Object.keys(repo).map((key) => {
+          const arr = repo[key as keyof typeof repo] as Repo[];
+          return (
+            <div className={styles.paragraph} key={key}>
+              <h1>{key}</h1>
+              <ol className={styles.list}>
+                {!loading &&
+                  arr?.map((item: Repo) => (
+                    <MyItemBlock item={item} key={item.name} />
+                  ))}
+              </ol>
+            </div>
+          );
+        })}
 
       <Tips />
     </div>

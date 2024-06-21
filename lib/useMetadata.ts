@@ -2,7 +2,7 @@ import { Repo } from "@/pages/api/metadata/index.js";
 import { useEffect, useState } from "react";
 
 export default function useMetadata() {
-  const [repo, setRepo] = useState<Repo[]>([]);
+  const [repo, setRepo] = useState<{ string: Repo[] }>();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

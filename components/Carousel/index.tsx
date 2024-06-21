@@ -62,7 +62,7 @@ function getDeviceWH() {
 export default function Carousel() {
   useEffect(() => {
     timer = setInterval(() => {
-      if (document["webkitHidden"]) {
+      if ((document as any)["webkitHidden"]) {
         return;
       }
       left();

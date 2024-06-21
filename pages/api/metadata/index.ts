@@ -20,7 +20,7 @@ export default async function handler(
 export interface Repo {
   name: string;
   url: string;
-  desc: string;
+  desc: string[];
   github?: string;
   tags: string[];
   over?: string;

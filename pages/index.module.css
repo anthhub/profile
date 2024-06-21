@@ -1,0 +1,11 @@
+.page .center {
+  display: flex;
+  justify-content: center;
+}
+
+.home {
+  overflow-y: scroll;
+  overflow-x: hidden;
+  max-height: calc(100vh - 50px);
+  width: 100vw;
+}

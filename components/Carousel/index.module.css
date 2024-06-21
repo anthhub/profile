@@ -1,0 +1,51 @@
+.carousel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.carousel .btn {
+  cursor: pointer;
+  margin: 0px 20px;
+  z-index: 999;
+}
+
+.carousel .outer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.carousel .wrapper {
+  overflow: hidden;
+}
+
+.carousel .container {
+  width: 1000px;
+  height: 600px;
+  display: flex;
+  transition: transform 2s;
+  position: relative;
+}
+
+.carousel .inner {
+  width: 1000px;
+  height: 600px;
+
+  transition: transform 2s;
+  position: absolute;
+}
+
+@media screen and (max-width: 1000px) {
+  .carousel .inner {
+    width: 100vw;
+    height: 60vw;
+  }
+  .carousel .container {
+    width: 100vw;
+    height: 60vw;
+  }
+  .carousel .btn {
+    margin: 0px -2em;
+  }
+}

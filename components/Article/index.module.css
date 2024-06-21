@@ -1,0 +1,96 @@
+.article {
+  margin-bottom: 40px;
+  padding: 5px;
+}
+
+.article .paragraph {
+  margin-top: 30px;
+}
+
+.article .list {
+  /* margin-top: 20px; */
+}
+
+.article .item {
+  /* position: relative; */
+  margin-bottom: 20px;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.article .item:hover {
+  background-color: #f5df5817;
+  box-shadow: var(--box-shadow);
+}
+
+.article .tag {
+  box-sizing: border-box;
+  font-size: 14px;
+  font-variant: tabular-nums;
+  line-height: 1.5715;
+  list-style: none;
+  font-feature-settings: "tnum";
+  display: inline-block;
+  height: auto;
+  padding: 0 7px;
+  font-size: 12px;
+  line-height: 20px;
+  white-space: nowrap;
+  border: 1px solid #d9d9d9;
+  border-radius: 2px;
+  opacity: 1;
+  transition: all 0.3s;
+  color: #fff;
+  border-color: transparent;
+  margin-left: 4px;
+  margin-bottom: 4px;
+  padding: 0 6px;
+}
+
+.article .desc-ul {
+  margin-left: 25px;
+}
+
+.article .desc-ul li {
+  list-style: disc;
+}
+
+.article .desc {
+  max-width: 900px;
+  line-height: 1.7;
+  word-break: break-word;
+  white-space: normal;
+}
+
+.article .desc-over {
+  color: red;
+}
+
+.article .over {
+  position: absolute;
+  top: 55px;
+  right: 0;
+  bottom: 0;
+  visibility: hidden;
+  width: 270px;
+  height: 500px;
+}
+
+.article .over.show {
+  visibility: visible;
+}
+
+.article a.article-title:hover {
+  color: #ff4118;
+}
+
+@media screen and (max-width: 1000px) {
+  .article .desc {
+    max-width: calc(100vw - 40px);
+  }
+
+  .article .over {
+    width: 30vw;
+    height: 60vw;
+  }
+}

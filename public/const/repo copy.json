@@ -1,0 +1,309 @@
+{
+    "Cluster Management": [
+        {
+            "name": "Kubernetes Dashboard",
+            "url": "https://106.15.90.38:31111/",
+            "desc": [
+                "kubernetes-dashboard + helm + k3d 部署集群资源管理",
+                "必须使用 https 访问, 并信任此网站 (输入: thisisunsafe)",
+                "admin token 请当面询问... [奸笑]"
+            ],
+            "tags": [
+                "k3d",
+                "k3s",
+                "k8s",
+                "Go",
+                "kubernetes",
+                "helm",
+                "cluster"
+            ]
+        },
+        {
+            "name": "Traefik Gateway",
+            "url": "http://traefik.liuma.top/dashboard/#/",
+            "desc": [
+                "traefik + helm + k3d 部署集群网关",
+                "通过扩展 CRD 的方式来扩展 Ingress",
+                "支持 http/https(自签名)"
+            ],
+            "tags": [
+                "gateway",
+                "route",
+                "proxy",
+                "k3d",
+                "k8s",
+                "kubernetes",
+                "traefik",
+                "ingress",
+                "helm"
+            ]
+        },
+        {
+            "name": "Grafana",
+            "url": "http://grafana.liuma.top",
+            "desc": [
+                "grafana + helm + k3d 部署集群实时数据大屏",
+                "usn: admin, pwd: admin-liuma"
+            ],
+            "tags": [
+                "k3d",
+                "k8s",
+                "kubernetes",
+                "helm",
+                "cluster"
+            ]
+        },
+        {
+            "name": "Prometheus",
+            "url": "http://prome.liuma.top",
+            "desc": [
+                "prometheus + helm + k3d 部署集群实时数据采集"
+            ],
+            "tags": [
+                "prometheus",
+                "Go",
+                "k3d",
+                "k8s",
+                "exporter",
+                "kubernetes",
+                "helm",
+                "cluster"
+            ]
+        }
+    ],
+    "Engineering Library": [
+        {
+            "name": "Matrox",
+            "url": "https://www.npmjs.com/package/matrox",
+            "desc": [
+                "结合 mobx 和 redux 特性的前端状态管理库",
+                "两个 API, 符合直觉, 几乎无需学习成本",
+                "支持类 redux 中间件, 方便拓展, 轻松实现时间旅行",
+                "支持类 mobx 依赖收集(使用 Proxy API), 类 setState 合并和批量更新, 优化性能",
+                "支持 store 数据的预加载和持久化",
+                "完美的 TypeScript 支持",
+                "支持 function(hooks) 和 class(decorator) 组件",
+                "轻松支持 store 多例模式"
+            ],
+            "github": "https://github.com/anthhub/matrox",
+            "tags": [
+                "store",
+                "redux",
+                "mobx",
+                "react",
+                "hooks",
+                "typescript",
+                "npm"
+            ]
+        },
+        {
+            "name": "Millet",
+            "url": "https://www.npmjs.com/package/millet",
+            "desc": [
+                "基于 Koa 中间件的通用中间件工具库, 需求来源于微信小程序获取最新 token",
+                "支持中间件提前终止",
+                "支持任务重试和限流(见example)",
+                "完美的 TypeScript 支持"
+            ],
+            "github": "https://github.com/anthhub/millet",
+            "tags": [
+                "middleware",
+                "koa",
+                "typescript",
+                "http",
+                "npm"
+            ]
+        },
+        {
+            "name": "Taskgroup",
+            "url": "https://pkg.go.dev/github.com/anthhub/taskgroup",
+            "desc": [
+                "Go goroutine 通用并发控制库",
+                "支持 context 控制, goroutine 限流, 自定义最大错误数, 内置 goroutine recover, 轻松构建生产者-消费者模式"
+            ],
+            "github": "https://github.com/anthhub/taskgroup",
+            "tags": [
+                "goroutine",
+                "channel",
+                "coroutine",
+                "Go",
+                "CSP",
+                "GPM"
+            ]
+        },
+        {
+            "name": "Cupboard",
+            "url": "https://pkg.go.dev/github.com/anthhub/cupboard",
+            "desc": [
+                "Go 程序化控制 docker 容器生命周期工具库; 可以在测试和联调阶段代替 docker-compose 来启动多个容器",
+                "支持多容器创建, 自动镜像拉取, 重名容器覆盖, 传入环境变量, 结束销毁容器等功能"
+            ],
+            "github": "https://github.com/anthhub/cupboard",
+            "tags": [
+                "docker",
+                "docker-compose",
+                "container",
+                "Go",
+                "test"
+            ]
+        },
+        {
+            "name": "Forwarder",
+            "url": "https://pkg.go.dev/github.com/anthhub/forwarder",
+            "desc": [
+                "Go 程序化控制 kubernetes 通过 service/pods 转发容器服务; 集群服务本地调试, 前后端联调非常有用, 大大提高生产力!!!",
+                "支持多服务转发映射本地端口, 生成和返回随机本地端口"
+            ],
+            "github": "https://github.com/anthhub/forwarder",
+            "tags": [
+                "port-forward",
+                "service",
+                "pods",
+                "cluster",
+                "k8s",
+                "devops",
+                "kubernetes",
+                "Go"
+            ]
+        }
+    ],
+    "VScode Plugin": [
+        {
+            "name": "fat-json",
+            "url": "https://marketplace.visualstudio.com/items?itemName=anthhub.fat-json",
+            "desc": [
+                "使用 Typescript + Rust 极速格式化超大 JSON, 谁用谁知道",
+                "Rust 程序流式方式格式化 JSON, 无校验 JSON 功能[奸笑]"
+            ],
+            "github": "https://github.com/anthhub/vscode-fat-json",
+            "tags": [
+                "JSON",
+                "formatter",
+                "nodejs",
+                "VScode",
+                "typescript",
+                "plugin"
+            ]
+        },
+        {
+            "name": "eglint",
+            "url": "https://marketplace.visualstudio.com/items?itemName=anthhub.eglint",
+            "desc": [
+                "使用 Typescript 开发检查和提示 VScode 英语句子语法",
+                "由于时间原因, 使用的是正则表达式匹配; 后续计划改为使用 VScode 语言服务器"
+            ],
+            "github": "https://github.com/anthhub/vscode-eglint",
+            "tags": [
+                "English",
+                "grammar",
+                "nodejs",
+                "typescript",
+                "VScode",
+                "plugin"
+            ]
+        }
+    ],
+    "Creative Application": [
+        {
+            "name": "Deno SSR",
+            "url": "http://liuma.top",
+            "desc": [
+                "使用 Deno + Typescript 服务端渲染网站, 即本站点; 使用 docker + helm + k3d 部署",
+                "使用 Deno 类 React 框架 Aleph; 前后端 React 同构",
+                "多图片 vs 单元素实现轮播图",
+                "使用 docker + helm + k3d 部署, 可轻松实现负责均衡, 滚动更新, 资源限制等"
+            ],
+            "github": "https://github.com/anthhub/home",
+            "tags": [
+                "aleph",
+                "SSR",
+                "deno",
+                "react",
+                "typescript",
+                "docker"
+            ]
+        },
+        {
+            "name": "Anthhub Juejin",
+            "url": "http://rjj.liuma.top",
+            "desc": [
+                "React + Typescript 仿掘金网; 使用 docker + nginx + helm + k3d 部署",
+                "store 使用 useReducer + useContext 自制 redux",
+                "实现掘金大部分功能: 登录注册, 点赞评论, 图片存储, 个人主页, 文章列表, 富文本编辑等..."
+            ],
+            "github": "https://juejin.cn/post/6844904016321708046",
+            "tags": [
+                "react",
+                "webpack",
+                "typescript",
+                "styled-components",
+                "redux",
+                "hooks",
+                "docker"
+            ]
+        },
+        {
+            "name": "Anthhub Juejin Backend",
+            "url": "http://njj.liuma.top/blog",
+            "desc": [
+                "Nestjs + Typescript + Mongodb 仿掘金网后端服务",
+                "使用 docker + helm + k3d 部署, 可轻松实现负责均衡, 滚动更新, 资源限制等",
+                "使用 Nestjs 装饰器轻松生成 swagger 文档"
+            ],
+            "github": "https://github.com/anthhub/nest-mini-blog",
+            "tags": [
+                "nestjs",
+                "nodejs",
+                "typescript",
+                "mongodb",
+                "swagger",
+                "docker"
+            ]
+        },
+        {
+            "name": "WebAssembly Qunar website",
+            "url": "http://ytt.liuma.top",
+            "desc": [
+                "Yew(Rust wasm) 仿去哪儿网, 超前使用 hooks, 收录进 Awesome Yew; Actix-web 实现后端",
+                "使用 Yew -- Rust 前端类 React 框架, yew-router -- Yew 前端路由库, yew-functional -- Yew 的 React hooks 库等, 编译为 wasm 执行",
+                "使用 docker + nginx + helm + k3d 部署",
+                "Rust actix-web 框架实现后端服务: https://github.com/anthhub/actix-train-ticket",
+                "Go gin 框架实现后端服务, 请求响应极快: https://github.com/anthhub/gin-train-ticket"
+            ],
+            "github": "https://github.com/anthhub/yew-train-ticket",
+            "tags": [
+                "yew",
+                "WebAssembly",
+                "wasm",
+                "Rust",
+                "hooks",
+                "docker"
+            ]
+        },
+        {
+            "name": "Tutu Makeup Miniapp",
+            "desc": [
+                "Hackathon 参赛作品: AI 美妆小程序",
+                "微信搜索:[图图应用] (因为环境问题, 后端接口访问会失败, 效果可参看 gif)",
+                "TensorFlow/Pytorch 使用 GAN 网络实现 AI 照片仿妆和动漫风格照片",
+                "合作的前端项目见 : https://github.com/wussss/Hackathon-TuTu"
+            ],
+            "github": "https://github.com/anthhub/makeup-photo-flask",
+            "tags": [
+                "WX",
+                "wechat",
+                "miniapp",
+                "GAN",
+                "AI",
+                "Neural Networks",
+                "TensorFlow",
+                "Pytorch",
+                "Python",
+                "Flask",
+                "Anaconda",
+                "opencv"
+            ],
+            "over": "http://liuma.top/image/tutu.gif"
+        }
+    ]
+}

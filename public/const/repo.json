@@ -25,41 +25,8 @@
             ]
         },
         {
-            "name": "Taskgroup",
-            "url": "https://pkg.go.dev/github.com/anthhub/taskgroup",
-            "desc": [
-                "Go goroutine 通用并发控制库",
-                "支持 context 控制, goroutine 限流, 自定义最大错误数, 内置 goroutine recover, 轻松构建生产者-消费者模式"
-            ],
-            "github": "https://github.com/anthhub/taskgroup",
-            "tags": [
-                "goroutine",
-                "channel",
-                "coroutine",
-                "Go",
-                "CSP",
-                "GPM"
-            ]
-        },
-        {
-            "name": "Cupboard",
-            "url": "https://pkg.go.dev/github.com/anthhub/cupboard",
-            "desc": [
-                "Go 程序化控制 docker 容器生命周期工具库; 可以在测试和联调阶段代替 docker-compose 来启动多个容器",
-                "支持多容器创建, 自动镜像拉取, 重名容器覆盖, 传入环境变量, 结束销毁容器等功能"
-            ],
-            "github": "https://github.com/anthhub/cupboard",
-            "tags": [
-                "docker",
-                "docker-compose",
-                "container",
-                "Go",
-                "test"
-            ]
-        },
-        {
             "name": "Forwarder",
-            "url": "https://pkg.go.dev/github.com/anthhub/forwarder",
+            "url": "https://github.com/anthhub/forwarder",
             "desc": [
                 "Go 程序化控制 kubernetes 通过 service/pods 转发容器服务; 集群服务本地调试, 前后端联调非常有用, 大大提高生产力!!!",
                 "支持多服务转发映射本地端口, 生成和返回随机本地端口"
@@ -75,9 +42,59 @@
                 "kubernetes",
                 "Go"
             ]
+        },
+        {
+            "name": "Cupboard",
+            "url": "https://github.com/anthhub/cupboard",
+            "desc": [
+                "Go 程序化控制 docker 容器生命周期工具库; 可以在测试和联调阶段代替 docker-compose 来启动多个容器",
+                "支持多容器创建, 自动镜像拉取, 重名容器覆盖, 传入环境变量, 结束销毁容器等功能"
+            ],
+            "github": "https://github.com/anthhub/cupboard",
+            "tags": [
+                "docker",
+                "docker-compose",
+                "container",
+                "Go",
+                "test"
+            ]
+        },
+        {
+            "name": "Taskgroup",
+            "url": "https://pkg.go.dev/github.com/anthhub/taskgroup",
+            "desc": [
+                "Go goroutine 通用并发控制库",
+                "支持 context 控制, goroutine 限流, 自定义最大错误数, 内置 goroutine recover, 轻松构建生产者-消费者模式"
+            ],
+            "github": "https://github.com/anthhub/taskgroup",
+            "tags": [
+                "goroutine",
+                "channel",
+                "coroutine",
+                "Go",
+                "CSP",
+                "GPM"
+            ]
         }
     ],
     "VScode Plugin": [
+        {
+            "name": "css-mod",
+            "url": "https://github.com/anthhub/vscode-css-mate",
+            "desc": [
+                "使用 Typescript 开发检查和提示 VScode CSS-module 句子语法, 支持类选择器跳转、预览以及代码校验等"
+            ],
+            "github": "https://github.com/anthhub/vscode-css-mate",
+            "tags": [
+                "css-module",
+                "AST",
+                "tsc",
+                "nodejs",
+                "typescript",
+                "VScode",
+                "plugin"
+            ]
+        },
         {
             "name": "fat-json",
             "url": "https://marketplace.visualstudio.com/items?itemName=anthhub.fat-json",
@@ -97,7 +114,7 @@
         },
         {
             "name": "eglint",
-            "url": "https://marketplace.visualstudio.com/items?itemName=anthhub.eglint",
+            "url": "https://marketplace.visualstudio.com/items?itemName=anthhub.css-mod",
             "desc": [
                 "使用 Typescript 开发检查和提示 VScode 英语句子语法",
                 "由于时间原因, 使用的是正则表达式匹配; 后续计划改为使用 VScode 语言服务器"
@@ -116,7 +133,7 @@
     "Creative Application": [
         {
             "name": "Anthhub Juejin",
-            "url": "http://rjj.liuma.top",
+            "url": "https://github.com/anthhub/react-mini-blog",
             "desc": [
                 "React + Typescript 仿掘金网; 使用 docker + nginx + helm + k3d 部署",
                 "store 使用 useReducer + useContext 自制 redux",
@@ -135,7 +152,7 @@
         },
         {
             "name": "Anthhub Juejin Backend",
-            "url": "http://njj.liuma.top/blog",
+            "url": "https://github.com/anthhub/nest-mini-blog",
             "desc": [
                 "Nestjs + Typescript + Mongodb 仿掘金网后端服务",
                 "使用 docker + helm + k3d 部署, 可轻松实现负责均衡, 滚动更新, 资源限制等",
@@ -153,7 +170,7 @@
         },
         {
             "name": "WebAssembly Qunar website",
-            "url": "http://ytt.liuma.top",
+            "url": "https://github.com/anthhub/yew-train-ticket",
             "desc": [
                 "Yew(Rust wasm) 仿去哪儿网, 超前使用 hooks, 收录进 Awesome Yew; Actix-web 实现后端",
                 "使用 Yew -- Rust 前端类 React 框架, yew-router -- Yew 前端路由库, yew-functional -- Yew 的 React hooks 库等, 编译为 wasm 执行",
@@ -193,8 +210,7 @@
                 "Flask",
                 "Anaconda",
                 "opencv"
-            ],
-            "over": "http://liuma.top/image/tutu.gif"
+            ]
         }
     ]
 }

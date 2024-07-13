@@ -20,7 +20,7 @@ function move(cur: number) {
   const childs = document.querySelectorAll(`.${styles.inner}`);
   setTimeout(() => {
     childs.forEach((item: any) => {
-      parent && parent?.removeChild(item);
+      parent && parent?.removeChild?.(item);
     });
   }, 2000);
 

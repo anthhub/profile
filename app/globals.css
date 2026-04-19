@@ -95,6 +95,52 @@ body {
   background: #c0c0c0;
 }
 
+/* Title bar: show pointer cursor on double-click target, no text selection */
+.win-frame .title-bar {
+  cursor: grab;
+  user-select: none;
+}
+.win-frame .title-bar:active {
+  cursor: grabbing;
+}
+
+/* Maximized state — remove any drop-shadow-like effects, taller body */
+.win-maximized {
+  box-shadow: none !important;
+  transition: none;
+}
+.win-maximized .title-bar {
+  cursor: default;
+}
+
+/* Restore button glyph (two overlapping squares), overrides 98.css "maximize" */
+.title-bar-controls .restore-btn {
+  position: relative;
+}
+.title-bar-controls .restore-btn::before,
+.title-bar-controls .restore-btn::after {
+  content: "";
+  position: absolute;
+  border: 1px solid #000;
+  background: transparent;
+  box-sizing: border-box;
+}
+.title-bar-controls .restore-btn::before {
+  width: 7px;
+  height: 6px;
+  left: 3px;
+  top: 5px;
+  border-top-width: 2px;
+}
+.title-bar-controls .restore-btn::after {
+  width: 7px;
+  height: 6px;
+  left: 6px;
+  top: 2px;
+  border-top-width: 2px;
+  background: #c0c0c0;
+}
+
 /* Taskbar */
 .taskbar {
   position: fixed;

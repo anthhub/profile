@@ -49,6 +49,12 @@ type OpenWindow = {
   h: number;
   z: number;
   minimized?: boolean;
+  maximized?: boolean;
+  // Saved geometry before maximize so Restore returns to the same place
+  savedX?: number;
+  savedY?: number;
+  savedW?: number;
+  savedH?: number;
 };
 
 const categoryFolderColor: Record<string, string> = {
@@ -300,6 +306,22 @@ export default function WinDesktop({ data }: { data: Categories }) {
     };
   }, [booted]);
 
+  // Keep maximized windows synced with viewport on resize
+  useEffect(() => {
+    const onResize = () => {
+      const TASKBAR = 32;
+      setWindows((ws) =>
+        ws.map((w) =>
+          w.maximized
+            ? { ...w, x: 0, y: 0, w: window.innerWidth, h: window.innerHeight - TASKBAR }
+            : w,
+        ),
+      );
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
   // ESC closes the top-most window
   useEffect(() => {
     if (!booted) return;
@@ -413,6 +435,40 @@ export default function WinDesktop({ data }: { data: Categories }) {
 
   const minimizeWindow = (id: string) =>
     setWindows((ws) => ws.map((w) => (w.id === id ? { ...w, minimized: true } : w)));
+
+  const toggleMaximize = (id: string) => {
+    const vw = typeof window !== "undefined" ? window.innerWidth : 1280;
+    const vh = typeof window !== "undefined" ? window.innerHeight : 800;
+    const TASKBAR = 32;
+    setWindows((ws) =>
+      ws.map((w) => {
+        if (w.id !== id) return w;
+        if (w.maximized) {
+          return {
+            ...w,
+            x: w.savedX ?? w.x,
+            y: w.savedY ?? w.y,
+            w: w.savedW ?? w.w,
+            h: w.savedH ?? w.h,
+            maximized: false,
+          };
+        }
+        return {
+          ...w,
+          savedX: w.x,
+          savedY: w.y,
+          savedW: w.w,
+          savedH: w.h,
+          x: 0,
+          y: 0,
+          w: vw,
+          h: vh - TASKBAR,
+          maximized: true,
+        };
+      }),
+    );
+    focusWindow(id);
+  };
 
   // Click outside icons deselects
   const onDesktopClick = () => {
@@ -538,19 +594,61 @@ export default function WinDesktop({ data }: { data: Categories }) {
         {windows.map((w) => !w.minimized && (
           <Rnd
             key={w.id}
-            default={{ x: w.x, y: w.y, width: w.w, height: w.h }}
+            size={{ width: w.w, height: w.h }}
+            position={{ x: w.x, y: w.y }}
             minWidth={280}
             minHeight={180}
             bounds="parent"
+            disableDragging={w.maximized}
+            enableResizing={!w.maximized}
             dragHandleClassName="title-bar"
             style={{ zIndex: w.z, display: w.minimized ? "none" : "block" }}
             onMouseDown={() => focusWindow(w.id)}
+            onDragStop={(_, d) => {
+              setWindows((ws) =>
+                ws.map((x) =>
+                  x.id === w.id ? { ...x, x: d.x, y: d.y } : x,
+                ),
+              );
+            }}
+            onResizeStop={(_e, _dir, ref, _delta, pos) => {
+              setWindows((ws) =>
+                ws.map((x) =>
+                  x.id === w.id
+                    ? {
+                        ...x,
+                        w: ref.offsetWidth,
+                        h: ref.offsetHeight,
+                        x: pos.x,
+                        y: pos.y,
+                      }
+                    : x,
+                ),
+              );
+            }}
           >
             <div
-              className={`window win-frame win-anim ${closingIds.includes(w.id) ? "win-closing" : ""}`}
+              className={`window win-frame win-anim ${closingIds.includes(w.id) ? "win-closing" : ""} ${w.maximized ? "win-maximized" : ""}`}
               style={{ width: "100%", height: "100%" }}
             >
-              <div className="title-bar">
+              <div
+                className="title-bar"
+                onDoubleClick={() => toggleMaximize(w.id)}
+                onClick={(e) => {
+                  // Fallback: Rnd's drag handler sometimes swallows dblclick.
+                  // Track click timestamps and fire maximize on 2 clicks < 400ms.
+                  const el = e.currentTarget as HTMLDivElement & {
+                    _lastClick?: number;
+                  };
+                  const now = Date.now();
+                  if (el._lastClick && now - el._lastClick < 400) {
+                    toggleMaximize(w.id);
+                    el._lastClick = 0;
+                  } else {
+                    el._lastClick = now;
+                  }
+                }}
+              >
                 <div className="title-bar-text" style={{ display: "flex", alignItems: "center", gap: 6 }}>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={w.icon} alt="" width={16} height={16} style={{ imageRendering: "pixelated" }} />
@@ -558,7 +656,11 @@ export default function WinDesktop({ data }: { data: Categories }) {
                 </div>
                 <div className="title-bar-controls">
                   <button aria-label="Minimize" onClick={() => minimizeWindow(w.id)} />
-                  <button aria-label="Maximize" />
+                  <button
+                    aria-label={w.maximized ? "Restore" : "Maximize"}
+                    className={w.maximized ? "restore-btn" : ""}
+                    onClick={() => toggleMaximize(w.id)}
+                  />
                   <button aria-label="Close" onClick={() => closeWindow(w.id)} />
                 </div>
               </div>

@@ -1576,3 +1576,409 @@ body {
     gap: 6px;
   }
 }
+
+/* Arcade shake + combo */
+@keyframes arcadeShake {
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(-3px, 2px); }
+  40% { transform: translate(3px, -2px); }
+  60% { transform: translate(-2px, -2px); }
+  80% { transform: translate(2px, 2px); }
+}
+.arcade-shake .arcade-screen {
+  animation: arcadeShake 0.35s ease-in-out;
+}
+.arcade-combo {
+  position: absolute;
+  top: 18%;
+  right: 8%;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  color: #fde047;
+  font-family: "Press Start 2P", monospace;
+  letter-spacing: 2px;
+  text-shadow:
+    0 0 6px #fde047,
+    0 0 14px #ff2d95,
+    2px 2px 0 #000;
+  pointer-events: none;
+  z-index: 12;
+  animation: comboPop 1.6s cubic-bezier(0.2, 1, 0.3, 1);
+}
+.arcade-combo-x { font-size: 18px; }
+.arcade-combo-n { font-size: 42px; color: #ff2d95; }
+.arcade-combo-label { font-size: 12px; margin-left: 6px; }
+@keyframes comboPop {
+  0% { transform: scale(0.2) rotate(-14deg); opacity: 0; }
+  30% { transform: scale(1.3) rotate(4deg); opacity: 1; }
+  60% { transform: scale(1) rotate(0); opacity: 1; }
+  100% { transform: scale(1) translateY(-12px) rotate(0); opacity: 0; }
+}
+
+/* ============================================
+   DESKTOP FX — cursor trail, particles, party, BSOD, context menu
+   ============================================ */
+
+/* ---- Wallpapers ---- */
+.wp-teal .desktop {
+  background:
+    radial-gradient(ellipse at top, #00a0a0 0%, #008080 50%, #006666 100%),
+    linear-gradient(180deg, #00a0a0, #008080);
+}
+.wp-sunset .desktop {
+  background:
+    radial-gradient(ellipse at top, #ffb677 0%, #f06966 40%, #7a1e6b 100%);
+}
+.wp-space .desktop {
+  background:
+    radial-gradient(ellipse at 30% 20%, #1e1b4b 0%, #0f0a2b 50%, #050110 100%);
+}
+.wp-matrix .desktop {
+  background:
+    linear-gradient(180deg, #000 0%, #001a08 100%);
+}
+
+/* Subtle refresh flash */
+.desktop.refreshing {
+  animation: deskRefresh 0.4s ease-out;
+}
+@keyframes deskRefresh {
+  0% { filter: brightness(1); }
+  40% { filter: brightness(1.6) saturate(1.4); }
+  100% { filter: brightness(1); }
+}
+
+/* ---- Cursor trail ---- */
+.fx-trail {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9996;
+}
+.fx-trail-dot {
+  position: fixed;
+  transform: translate(-50%, -50%);
+  color: hsl(var(--hue), 85%, 65%);
+  font-size: 16px;
+  text-shadow:
+    0 0 6px hsl(var(--hue), 90%, 70%),
+    0 0 12px hsl(var(--hue), 80%, 55%);
+  animation: fxTrailFade 0.9s ease-out forwards;
+  font-family: Arial, sans-serif;
+}
+@keyframes fxTrailFade {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.4) translateY(16px) rotate(180deg);
+  }
+}
+
+/* ---- Ambient particles ---- */
+.fx-particles {
+  position: fixed;
+  inset: 0 0 var(--taskbar-h) 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 1;
+}
+.fx-particle {
+  position: absolute;
+  opacity: 0.55;
+  animation-name: particleFloat;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  will-change: transform, opacity;
+  text-shadow: 0 0 4px currentColor;
+  filter: drop-shadow(0 0 2px currentColor);
+}
+.fx-particle-l1 { opacity: 0.35; }
+.fx-particle-l2 { opacity: 0.55; }
+.fx-particle-l3 { opacity: 0.75; }
+@keyframes particleFloat {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(var(--phase));
+    opacity: 0;
+  }
+  8% {
+    opacity: var(--op, 0.6);
+  }
+  50% {
+    transform: translate3d(var(--drift), -50vh, 0) rotate(calc(var(--phase) + 180deg));
+  }
+  92% {
+    opacity: var(--op, 0.6);
+  }
+  100% {
+    transform: translate3d(calc(var(--drift) * -0.6), -110vh, 0) rotate(calc(var(--phase) + 360deg));
+    opacity: 0;
+  }
+}
+
+/* ---- Party mode ---- */
+.party-mode .desktop {
+  animation: partyBg 2s linear infinite;
+}
+@keyframes partyBg {
+  0% {
+    filter: hue-rotate(0deg) saturate(1.4);
+  }
+  100% {
+    filter: hue-rotate(360deg) saturate(1.4);
+  }
+}
+.party-mode .window {
+  animation: partyShake 0.25s infinite;
+}
+@keyframes partyShake {
+  0%, 100% { transform: translate(0, 0) rotate(0); }
+  25% { transform: translate(-1px, 1px) rotate(-0.3deg); }
+  50% { transform: translate(1px, -1px) rotate(0.3deg); }
+  75% { transform: translate(-1px, -1px) rotate(-0.2deg); }
+}
+.fx-rainbow {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  background: linear-gradient(
+    45deg,
+    rgba(255, 0, 128, 0.15),
+    rgba(255, 255, 0, 0.15),
+    rgba(0, 255, 200, 0.15),
+    rgba(120, 0, 255, 0.15)
+  );
+  background-size: 400% 400%;
+  animation: rainbowShift 3s ease-in-out infinite;
+  mix-blend-mode: screen;
+}
+@keyframes rainbowShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+.fx-confetti {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9998;
+  overflow: hidden;
+}
+.fx-confetti-piece {
+  position: absolute;
+  top: -20px;
+  display: inline-block;
+  animation-name: confettiFall;
+  animation-timing-function: cubic-bezier(0.2, 0.6, 0.4, 1);
+  animation-iteration-count: 1;
+  text-shadow: 0 0 4px currentColor;
+}
+@keyframes confettiFall {
+  0% {
+    transform: translateY(0) rotate(0);
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(110vh) rotate(var(--rot));
+    opacity: 0;
+  }
+}
+.fx-konami-banner {
+  position: fixed;
+  top: 28%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: "Press Start 2P", "Courier New", monospace;
+  font-size: 42px;
+  letter-spacing: 8px;
+  color: #fde047;
+  text-shadow:
+    0 0 8px #fde047,
+    0 0 18px #ff2d95,
+    0 0 32px #a855f7,
+    4px 4px 0 #000;
+  z-index: 9999;
+  text-align: center;
+  pointer-events: none;
+  animation: konamiBanner 10s ease-out;
+}
+.fx-konami-sub {
+  display: block;
+  font-size: 12px;
+  letter-spacing: 3px;
+  color: #fff;
+  margin-top: 10px;
+  text-shadow: 2px 2px 0 #000;
+}
+@keyframes konamiBanner {
+  0% { transform: translateX(-50%) scale(0.2); opacity: 0; }
+  6% { transform: translateX(-50%) scale(1.25); opacity: 1; }
+  12% { transform: translateX(-50%) scale(1); opacity: 1; }
+  85% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* ---- BSOD ---- */
+.fx-bsod {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: #0000aa;
+  color: #fff;
+  font-family: "Perfect DOS VGA", "Courier New", monospace;
+  font-size: 16px;
+  padding: 80px 40px;
+  white-space: pre-wrap;
+  cursor: pointer;
+  animation: bsodFadeIn 0.15s ease-out;
+}
+@keyframes bsodFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.fx-bsod-content {
+  max-width: 760px;
+  margin: 0 auto;
+  line-height: 1.55;
+}
+.fx-bsod-header {
+  display: inline-block;
+  background: #aaa;
+  color: #0000aa;
+  padding: 0 8px;
+  margin-bottom: 18px;
+  font-weight: bold;
+}
+.fx-bsod ul {
+  padding-left: 24px;
+  margin: 14px 0;
+}
+.fx-bsod-prompt {
+  margin-top: 22px;
+  animation: bsodBlink 1s steps(2) infinite;
+}
+@keyframes bsodBlink {
+  50% { opacity: 0.3; }
+}
+.fx-bsod-recover {
+  color: #9ef598;
+  font-size: 14px;
+  background: #000;
+  padding: 20px;
+  border-radius: 0;
+  animation: crtOn 0.6s ease-out;
+}
+@keyframes crtOn {
+  0% { transform: scaleY(0.02); opacity: 0; filter: brightness(5); }
+  60% { transform: scaleY(1.05); opacity: 1; }
+  100% { transform: scaleY(1); opacity: 1; filter: brightness(1); }
+}
+
+/* ---- Right-click context menu ---- */
+.ctx-menu {
+  position: fixed;
+  min-width: 200px;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #dfdfdf #808080 #808080 #dfdfdf;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+  z-index: 9999;
+  padding: 2px;
+  font-size: 13px;
+  animation: ctxPop 0.12s ease-out;
+}
+@keyframes ctxPop {
+  from { transform: scale(0.92); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.ctx-item {
+  position: relative;
+  padding: 5px 14px 5px 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ctx-item:hover {
+  background: #000080;
+  color: #fff;
+}
+.ctx-item.active {
+  font-weight: bold;
+}
+.ctx-ic {
+  width: 18px;
+  text-align: center;
+}
+.ctx-sep {
+  height: 1px;
+  background: #808080;
+  box-shadow: 0 1px 0 #dfdfdf;
+  margin: 4px 2px;
+}
+.ctx-submenu {
+  position: absolute;
+  left: 100%;
+  top: -2px;
+  min-width: 180px;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #dfdfdf #808080 #808080 #dfdfdf;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+  padding: 2px;
+}
+
+/* ---- Window open/close animation ---- */
+.win-anim {
+  animation: winOpen 0.22s cubic-bezier(0.2, 1, 0.3, 1);
+  transform-origin: center bottom;
+}
+@keyframes winOpen {
+  from {
+    transform: scale(0.82) translateY(14px);
+    opacity: 0.2;
+    filter: blur(2px);
+  }
+  to {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+.win-closing {
+  animation: winClose 0.22s ease-in forwards;
+}
+@keyframes winClose {
+  from {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: scale(0.85) translateY(20px);
+    opacity: 0;
+    filter: blur(2px);
+  }
+}
+
+/* Reduced motion — disable all non-essential FX */
+@media (prefers-reduced-motion: reduce) {
+  .win-anim,
+  .win-closing,
+  .fx-confetti-piece,
+  .fx-konami-banner,
+  .party-mode .desktop,
+  .party-mode .window,
+  .fx-rainbow,
+  .arcade-shake .arcade-screen,
+  .arcade-combo,
+  .desktop-icon.pulse .desktop-icon-img,
+  .desktop-icon.pulse .desktop-icon-label {
+    animation: none !important;
+  }
+}

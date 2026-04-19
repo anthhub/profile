@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FIGHTERS, type Fighter } from "@/components/language-sprites";
 
 type Variant = "fullscreen" | "framed";
@@ -11,6 +11,10 @@ export default function ArcadeCabinet({ variant = "framed" }: { variant?: Varian
   const [hover, setHover] = useState<string | null>(null);
   const [tick, setTick] = useState(0);
   const [phase, setPhase] = useState<"select" | "ready" | "fight">("select");
+  const [combo, setCombo] = useState(0);
+  const [shake, setShake] = useState(false);
+  const lastPickAt = useRef<number>(0);
+  const comboResetRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Blink / demo tick
   useEffect(() => {
@@ -23,6 +27,15 @@ export default function ArcadeCabinet({ variant = "framed" }: { variant?: Varian
     setPhase("ready");
     setFlash(true);
     setCredits((c) => Math.max(0, c - 1));
+    // Combo logic — picks within 1500ms chain
+    const now = Date.now();
+    const within = now - lastPickAt.current < 1500;
+    lastPickAt.current = now;
+    setCombo((c) => (within ? c + 1 : 1));
+    if (within) setShake(true);
+    if (comboResetRef.current) clearTimeout(comboResetRef.current);
+    comboResetRef.current = setTimeout(() => setCombo(0), 1700);
+    setTimeout(() => setShake(false), 400);
     setTimeout(() => setPhase("fight"), 500);
     setTimeout(() => {
       setFlash(false);
@@ -33,7 +46,7 @@ export default function ArcadeCabinet({ variant = "framed" }: { variant?: Varian
   const hiScore = 1_111_000;
 
   return (
-    <div className={`arcade-root arcade-${variant}`}>
+    <div className={`arcade-root arcade-${variant} ${shake ? "arcade-shake" : ""}`}>
       <div className="arcade-screen">
         {/* CRT overlay */}
         <div className="arcade-crt" />
@@ -148,6 +161,15 @@ export default function ArcadeCabinet({ variant = "framed" }: { variant?: Varian
             <div className="arcade-flash-text">
               {phase === "ready" ? "READY?" : "FIGHT!"}
             </div>
+          </div>
+        )}
+
+        {/* Combo counter */}
+        {combo >= 2 && (
+          <div className="arcade-combo" key={combo}>
+            <span className="arcade-combo-x">×</span>
+            <span className="arcade-combo-n">{combo}</span>
+            <span className="arcade-combo-label">COMBO!</span>
           </div>
         )}
       </div>

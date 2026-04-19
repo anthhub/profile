@@ -14,6 +14,21 @@ import {
 } from "@/components/icons";
 import WantedPoster from "@/components/wanted-poster";
 import ArcadeCabinet from "@/components/arcade-cabinet";
+import {
+  CursorTrail,
+  AmbientParticles,
+  useKonami,
+  PartyOverlay,
+  BSOD,
+} from "@/components/desktop-fx";
+
+type Wallpaper = "teal" | "sunset" | "space" | "matrix";
+const WALLPAPERS: Record<Wallpaper, string> = {
+  teal: "Teal (Classic)",
+  sunset: "Sunset Orange",
+  space: "Deep Space",
+  matrix: "Matrix Green",
+};
 
 type WindowKind =
   | { type: "category"; key: string }
@@ -49,6 +64,8 @@ const clippyMessages = [
   "🎨 Creative Application → fun Web / WASM experiments",
   "☠️ Secret: open WANTED.exe for the One Piece bounty poster!",
   "🕹️ Try ARCADE.exe — pick your fighter from 12 pixel-art languages!",
+  "🎮 Power users: try the Konami code ↑↑↓↓←→←→BA 🎉",
+  "🖱️ Right-click the desktop for wallpapers, scanlines & properties",
   "⌨️ Press ESC to close any window. Click Start for the full menu.",
   "📺 Want full CRT vibes? Start → \"CRT scanlines\"",
 ];
@@ -65,6 +82,32 @@ export default function WinDesktop({ data }: { data: Categories }) {
   const [clippyMsg, setClippyMsg] = useState(0);
   const [highlightIcons, setHighlightIcons] = useState(true);
   const [idleHint, setIdleHint] = useState(false);
+  const [party, setParty] = useState(false);
+  const [bsod, setBsod] = useState(false);
+  const [wallpaper, setWallpaper] = useState<Wallpaper>("teal");
+  const [startClicks, setStartClicks] = useState<number[]>([]);
+  const [contextMenu, setContextMenu] = useState<
+    | { x: number; y: number; sub?: "wallpaper" | null }
+    | null
+  >(null);
+  const [closingIds, setClosingIds] = useState<string[]>([]);
+
+  // Konami code → party mode
+  useKonami(() => setParty(true));
+
+  // BSOD: 5 rapid Start clicks in 1.5s
+  const onStartClick = () => {
+    const now = Date.now();
+    setStartClicks((arr) => {
+      const fresh = [...arr, now].filter((t) => now - t < 1500);
+      if (fresh.length >= 5) {
+        setBsod(true);
+        return [];
+      }
+      return fresh;
+    });
+    setStartOpen((v) => !v);
+  };
 
   // Boot screen (show for 1.2s)
   useEffect(() => {
@@ -250,8 +293,13 @@ export default function WinDesktop({ data }: { data: Categories }) {
     [zCounter],
   );
 
-  const closeWindow = (id: string) =>
-    setWindows((ws) => ws.filter((w) => w.id !== id));
+  const closeWindow = (id: string) => {
+    setClosingIds((ids) => [...ids, id]);
+    setTimeout(() => {
+      setWindows((ws) => ws.filter((w) => w.id !== id));
+      setClosingIds((ids) => ids.filter((x) => x !== id));
+    }, 220);
+  };
 
   const minimizeWindow = (id: string) =>
     setWindows((ws) => ws.map((w) => (w.id === id ? { ...w, minimized: true } : w)));
@@ -259,6 +307,13 @@ export default function WinDesktop({ data }: { data: Categories }) {
   // Click outside icons deselects
   const onDesktopClick = () => {
     setSelectedIcon(null);
+    setStartOpen(false);
+    setContextMenu(null);
+  };
+
+  const onDesktopContext = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setContextMenu({ x: e.clientX, y: e.clientY, sub: null });
     setStartOpen(false);
   };
 
@@ -311,8 +366,14 @@ export default function WinDesktop({ data }: { data: Categories }) {
   ];
 
   return (
-    <div className={scanlines ? "scanlines" : ""}>
-      <div className="desktop" onClick={onDesktopClick}>
+    <div className={`${scanlines ? "scanlines" : ""} wp-${wallpaper} ${party ? "party-mode" : ""}`}>
+      <AmbientParticles count={42} wallpaper={wallpaper} enabled={!bsod} />
+      <CursorTrail enabled={!bsod} />
+      <div
+        className="desktop"
+        onClick={onDesktopClick}
+        onContextMenu={onDesktopContext}
+      >
         <div className="desktop-grid">
           {desktopIcons.map((icon, idx) => (
             <DesktopIcon
@@ -375,7 +436,10 @@ export default function WinDesktop({ data }: { data: Categories }) {
             style={{ zIndex: w.z, display: w.minimized ? "none" : "block" }}
             onMouseDown={() => focusWindow(w.id)}
           >
-            <div className="window win-frame" style={{ width: "100%", height: "100%" }}>
+            <div
+              className={`window win-frame win-anim ${closingIds.includes(w.id) ? "win-closing" : ""}`}
+              style={{ width: "100%", height: "100%" }}
+            >
               <div className="title-bar">
                 <div className="title-bar-text" style={{ display: "flex", alignItems: "center", gap: 6 }}>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -400,7 +464,7 @@ export default function WinDesktop({ data }: { data: Categories }) {
           className={`taskbar-start ${startOpen ? "active" : ""}`}
           onClick={(e) => {
             e.stopPropagation();
-            setStartOpen((v) => !v);
+            onStartClick();
           }}
           style={{
             fontWeight: "bold",
@@ -508,6 +572,81 @@ export default function WinDesktop({ data }: { data: Categories }) {
           </div>
         </div>
       )}
+
+      {/* Right-click desktop context menu */}
+      {contextMenu && (
+        <div
+          className="ctx-menu"
+          style={{ left: contextMenu.x, top: contextMenu.y }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div
+            className="ctx-item"
+            onClick={() => {
+              setContextMenu(null);
+              // "Refresh" = quick flash
+              const d = document.querySelector(".desktop") as HTMLElement | null;
+              if (d) {
+                d.classList.remove("refreshing");
+                void d.offsetWidth;
+                d.classList.add("refreshing");
+              }
+            }}
+          >
+            <span className="ctx-ic">↻</span>Refresh
+          </div>
+          <div
+            className="ctx-item"
+            onMouseEnter={() => setContextMenu({ ...contextMenu, sub: "wallpaper" })}
+          >
+            <span className="ctx-ic">🖼️</span>
+            Change Wallpaper ▶
+            {contextMenu.sub === "wallpaper" && (
+              <div className="ctx-submenu">
+                {(Object.keys(WALLPAPERS) as Wallpaper[]).map((w) => (
+                  <div
+                    key={w}
+                    className={`ctx-item ${wallpaper === w ? "active" : ""}`}
+                    onClick={() => {
+                      setWallpaper(w);
+                      setContextMenu(null);
+                    }}
+                  >
+                    {WALLPAPERS[w]}
+                    {wallpaper === w ? " ✓" : ""}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          <div
+            className="ctx-item"
+            onClick={() => {
+              setScanlines((v) => !v);
+              setContextMenu(null);
+            }}
+          >
+            <span className="ctx-ic">📺</span>
+            CRT scanlines ({scanlines ? "ON" : "OFF"})
+          </div>
+          <div className="ctx-sep" />
+          <div
+            className="ctx-item"
+            onClick={() => {
+              openWindow({ type: "about" });
+              setContextMenu(null);
+            }}
+          >
+            <span className="ctx-ic">ℹ️</span>Properties
+          </div>
+        </div>
+      )}
+
+      {/* Konami party overlay */}
+      <PartyOverlay active={party} onEnd={() => setParty(false)} />
+
+      {/* BSOD easter egg */}
+      <BSOD active={bsod} onExit={() => setBsod(false)} />
     </div>
   );
 }

@@ -10,15 +10,18 @@ import {
   MailIcon,
   StartLogo,
   WantedIcon,
+  ArcadeIcon,
 } from "@/components/icons";
 import WantedPoster from "@/components/wanted-poster";
+import ArcadeCabinet from "@/components/arcade-cabinet";
 
 type WindowKind =
   | { type: "category"; key: string }
   | { type: "repo"; repo: Repo }
   | { type: "about" }
   | { type: "readme" }
-  | { type: "wanted" };
+  | { type: "wanted" }
+  | { type: "arcade" };
 
 type OpenWindow = {
   id: string;
@@ -45,6 +48,7 @@ const clippyMessages = [
   "🧩 VScode Plugin → editor extensions I published to the marketplace",
   "🎨 Creative Application → fun Web / WASM experiments",
   "☠️ Secret: open WANTED.exe for the One Piece bounty poster!",
+  "🕹️ Try ARCADE.exe — pick your fighter from 12 pixel-art languages!",
   "⌨️ Press ESC to close any window. Click Start for the full menu.",
   "📺 Want full CRT vibes? Start → \"CRT scanlines\"",
 ];
@@ -215,6 +219,12 @@ export default function WinDesktop({ data }: { data: Categories }) {
         icon = WantedIcon();
         w = 600;
         h = 560;
+      } else if (kind.type === "arcade") {
+        id = "arcade";
+        title = "ARCADE.exe — Skill Fighter";
+        icon = ArcadeIcon();
+        w = 720;
+        h = 560;
       } else {
         id = "readme";
         title = "README.txt";
@@ -279,6 +289,12 @@ export default function WinDesktop({ data }: { data: Categories }) {
       label: "GitHub",
       img: GithubIcon(),
       onOpen: () => window.open("https://github.com/anthhub", "_blank"),
+    },
+    {
+      id: "icon-arcade",
+      label: "ARCADE.exe",
+      img: ArcadeIcon(),
+      onOpen: () => openWindow({ type: "arcade" }),
     },
     {
       id: "icon-wanted",
@@ -448,6 +464,11 @@ export default function WinDesktop({ data }: { data: Categories }) {
               <img src={DocIcon("#888")} alt="" />
               README.txt
             </div>
+            <div className="start-menu-item" onClick={() => openWindow({ type: "arcade" })}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={ArcadeIcon()} alt="" />
+              ARCADE.exe
+            </div>
             <div className="start-menu-item" onClick={() => openWindow({ type: "wanted" })}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={WantedIcon()} alt="" />
@@ -595,6 +616,30 @@ function WindowContent({
           {r.url && r.url !== r.github && (
             <button onClick={() => window.open(r.url, "_blank")}>Visit...</button>
           )}
+        </div>
+      </div>
+    );
+  }
+
+  if (kind.type === "arcade") {
+    return (
+      <div className="window-body" style={{ padding: 0, background: "#000" }}>
+        <ArcadeCabinet variant="framed" />
+        <div
+          style={{
+            position: "sticky",
+            bottom: 0,
+            padding: "6px 10px",
+            background: "#c0c0c0",
+            borderTop: "1px solid #808080",
+            display: "flex",
+            gap: 8,
+            justifyContent: "flex-end",
+          }}
+        >
+          <button onClick={() => window.open("/arcade", "_blank")}>
+            Open fullscreen ↗
+          </button>
         </div>
       </div>
     );

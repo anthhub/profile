@@ -1,15 +1,11 @@
-import { readFile } from "fs/promises";
-import { join } from "path";
-import WinDesktop from "@/components/win-desktop";
-import type { Categories } from "@/lib/data";
+import type { Metadata } from "next";
+import WantedPoster from "@/components/wanted-poster";
 
-async function loadRepos(): Promise<Categories> {
-  const p = join(process.cwd(), "public", "const", "repo.json");
-  const raw = await readFile(p, "utf-8");
-  return JSON.parse(raw) as Categories;
-}
+export const metadata: Metadata = {
+  title: "WANTED — anthhub · ฿1,111,000,000",
+  description: "Dead or Alive. One Piece style bounty edition of anthhub.",
+};
 
-export default async function HomePage() {
-  const data = await loadRepos();
-  return <WinDesktop data={data} />;
+export default function WantedEditionHome() {
+  return <WantedPoster variant="fullscreen" />;
 }

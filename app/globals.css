@@ -3027,3 +3027,46 @@ body {
 .project-row.featured .project-name::after {
   content: " ✨";
 }
+
+/* Featured project row: inline "Open ↗" button + live link line */
+.project-row.featured {
+  position: relative;
+}
+.project-link {
+  font-size: 10px;
+  color: #9a1a5a;
+  margin-top: 3px;
+  font-family: "Courier New", monospace;
+}
+.project-row.featured:hover .project-link {
+  color: #fbcfe8;
+}
+.project-ext {
+  color: #ff2d95;
+  font-size: 11px;
+  margin-left: 6px;
+}
+.project-row.featured:hover .project-ext {
+  color: #fff;
+}
+.project-open-btn {
+  align-self: center;
+  font-family: "Pixelated MS Sans Serif", Arial, sans-serif;
+  font-size: 11px;
+  padding: 4px 10px;
+  background: #ff2d95;
+  color: #fff;
+  border: 2px solid;
+  border-color: #ffb3d9 #9a1a5a #9a1a5a #ffb3d9;
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-left: auto;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.35);
+}
+.project-open-btn:hover {
+  background: #fde047;
+  color: #000;
+}
+.project-open-btn:active {
+  border-color: #9a1a5a #ffb3d9 #ffb3d9 #9a1a5a;
+}

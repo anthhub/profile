@@ -1047,27 +1047,58 @@ function WindowContent({
           </div>
         </div>
         <div style={{ padding: 4 }}>
-          {items.map((repo) => (
-            <div
-              key={repo.name}
-              className={`project-row ${kind.key === "Featured · AI" ? "featured" : ""}`}
-              onDoubleClick={() => onOpenRepo(repo)}
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={DocIcon(kind.key === "Featured · AI" ? "#ff2d95" : "#4a6cd4")}
-                alt=""
-                className="project-icon"
-              />
-              <div className="project-meta">
-                <div className="project-name">{repo.name}</div>
-                <div className="project-desc">
-                  {(repo.desc[0] || "").slice(0, 120)}
-                  {repo.desc[0] && repo.desc[0].length > 120 ? "…" : ""}
+          {items.map((repo) => {
+            const isFeatured = kind.key === "Featured · AI";
+            const liveUrl = repo.url || repo.github;
+            const openLive = () => {
+              if (liveUrl) window.open(liveUrl, "_blank", "noopener");
+              else onOpenRepo(repo);
+            };
+            return (
+              <div
+                key={repo.name}
+                className={`project-row ${isFeatured ? "featured" : ""}`}
+                onDoubleClick={isFeatured ? openLive : () => onOpenRepo(repo)}
+                title={
+                  isFeatured
+                    ? `Double-click to open ${liveUrl ?? repo.name} ↗`
+                    : `Double-click to open ${repo.name}`
+                }
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={DocIcon(isFeatured ? "#ff2d95" : "#4a6cd4")}
+                  alt=""
+                  className="project-icon"
+                />
+                <div className="project-meta">
+                  <div className="project-name">
+                    {repo.name}
+                    {isFeatured && <span className="project-ext">↗</span>}
+                  </div>
+                  <div className="project-desc">
+                    {(repo.desc[0] || "").slice(0, 120)}
+                    {repo.desc[0] && repo.desc[0].length > 120 ? "…" : ""}
+                  </div>
+                  {isFeatured && liveUrl && (
+                    <div className="project-link">{liveUrl.replace(/^https?:\/\//, "")}</div>
+                  )}
                 </div>
+                {isFeatured && (
+                  <button
+                    className="project-open-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openLive();
+                    }}
+                    title="Open live site"
+                  >
+                    Open ↗
+                  </button>
+                )}
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     );

@@ -1,10 +1,10 @@
 "use client";
-import { useMemo } from "react";
 
 export type WantedVariant = "fullscreen" | "framed" | "compact";
 
 type Props = {
   variant?: WantedVariant;
+  username?: string;
   onBackToDesktop?: () => void;
 };
 
@@ -24,61 +24,16 @@ const STATS = [
   { label: "Bounty (₿)", value: "1,111,000,000" },
 ];
 
-export default function WantedPoster({ variant = "framed", onBackToDesktop }: Props) {
-  // Inline avatar — retro pixel captain drawn in SVG so there are no external deps.
-  const avatar = useMemo(
-    () =>
-      `data:image/svg+xml;utf8,${encodeURIComponent(
-        `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' shape-rendering='crispEdges'>
-          <defs>
-            <filter id='sepia' x='0' y='0'>
-              <feColorMatrix type='matrix' values='.393 .769 .189 0 0   .349 .686 .168 0 0   .272 .534 .131 0 0   0 0 0 1 0'/>
-            </filter>
-          </defs>
-          <g filter='url(#sepia)'>
-            <rect width='64' height='64' fill='#e8d5a8'/>
-            <!-- bandana -->
-            <rect x='14' y='10' width='36' height='8' fill='#7a1f1f'/>
-            <rect x='18' y='8' width='4' height='4' fill='#7a1f1f'/>
-            <rect x='42' y='8' width='4' height='4' fill='#7a1f1f'/>
-            <rect x='14' y='10' width='36' height='2' fill='#fff' opacity='0.15'/>
-            <!-- skull on bandana -->
-            <rect x='28' y='12' width='8' height='4' fill='#fff'/>
-            <rect x='30' y='14' width='1' height='1' fill='#000'/>
-            <rect x='33' y='14' width='1' height='1' fill='#000'/>
-            <!-- face -->
-            <rect x='16' y='18' width='32' height='30' fill='#f5deb3'/>
-            <rect x='16' y='18' width='32' height='2' fill='#000' opacity='0.15'/>
-            <!-- hair strand -->
-            <rect x='20' y='18' width='2' height='4' fill='#2d1a0e'/>
-            <rect x='42' y='18' width='2' height='4' fill='#2d1a0e'/>
-            <!-- eyes -->
-            <rect x='22' y='26' width='4' height='4' fill='#fff'/>
-            <rect x='38' y='26' width='4' height='4' fill='#fff'/>
-            <rect x='23' y='27' width='2' height='2' fill='#1a1a1a'/>
-            <rect x='39' y='27' width='2' height='2' fill='#1a1a1a'/>
-            <!-- eyebrows -->
-            <rect x='22' y='24' width='5' height='1' fill='#2d1a0e'/>
-            <rect x='37' y='24' width='5' height='1' fill='#2d1a0e'/>
-            <!-- scar -->
-            <rect x='22' y='30' width='1' height='3' fill='#a33'/>
-            <!-- mouth -->
-            <rect x='26' y='38' width='12' height='2' fill='#5a2a1a'/>
-            <rect x='24' y='40' width='16' height='1' fill='#5a2a1a'/>
-            <!-- earrings -->
-            <rect x='14' y='32' width='2' height='2' fill='#e5c200'/>
-            <rect x='48' y='32' width='2' height='2' fill='#e5c200'/>
-            <!-- jacket -->
-            <rect x='10' y='48' width='44' height='16' fill='#2f3a28'/>
-            <rect x='28' y='48' width='8' height='16' fill='#f5deb3'/>
-            <rect x='30' y='50' width='4' height='2' fill='#e5c200'/>
-            <rect x='30' y='54' width='4' height='2' fill='#e5c200'/>
-            <rect x='30' y='58' width='4' height='2' fill='#e5c200'/>
-          </g>
-        </svg>`,
-      )}`,
-    [],
-  );
+export default function WantedPoster({
+  variant = "framed",
+  username = "anthhub",
+  onBackToDesktop,
+}: Props) {
+  // Pull the avatar directly from GitHub's public avatar endpoint.
+  // https://github.com/{user}.png redirects to the current avatar file.
+  // We aged it with CSS filters (sepia + contrast + vignette) so it matches
+  // the torn-paper poster aesthetic instead of looking like a web screenshot.
+  const avatar = `https://github.com/${username}.png?size=320`;
 
   return (
     <div className={`wanted-poster wanted-${variant}`}>
@@ -96,9 +51,15 @@ export default function WantedPoster({ variant = "framed", onBackToDesktop }: Pr
         <div className="wanted-frame">
           <div className="wanted-frame-inner">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={avatar} alt="anthhub wanted portrait" className="wanted-avatar" />
+            <img
+              src={avatar}
+              alt={`${username} wanted portrait`}
+              className="wanted-avatar wanted-avatar-photo"
+              referrerPolicy="no-referrer"
+              loading="eager"
+            />
             <div className="wanted-photo-grain" />
-            <div className="wanted-photo-label">anthhub</div>
+            <div className="wanted-photo-label">{username}</div>
           </div>
         </div>
 

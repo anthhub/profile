@@ -57,6 +57,25 @@ export const MailIcon = () => `${base}${encodeURIComponent(
   </svg>`,
 )}`;
 
+// ARCADE.exe — a tiny arcade cabinet icon
+export const ArcadeIcon = () => `${base}${encodeURIComponent(
+  `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' shape-rendering='crispEdges'>
+    <rect x='5' y='2' width='22' height='28' fill='#2a0f5f' stroke='#000'/>
+    <rect x='7' y='4' width='18' height='8' fill='#000'/>
+    <rect x='8' y='5' width='16' height='2' fill='#ff2d95'/>
+    <rect x='8' y='8' width='4' height='3' fill='#22d3ee'/>
+    <rect x='14' y='8' width='4' height='3' fill='#fde047'/>
+    <rect x='20' y='8' width='4' height='3' fill='#a855f7'/>
+    <rect x='7' y='14' width='18' height='8' fill='#000'/>
+    <rect x='9' y='16' width='3' height='3' fill='#ff2d95'/>
+    <rect x='14' y='16' width='3' height='3' fill='#22d3ee'/>
+    <rect x='19' y='16' width='3' height='3' fill='#fde047'/>
+    <rect x='11' y='24' width='4' height='2' fill='#ff2d95'/>
+    <rect x='17' y='24' width='4' height='2' fill='#22d3ee'/>
+    <rect x='7' y='28' width='18' height='2' fill='#222'/>
+  </svg>`,
+)}`;
+
 // WANTED.exe — a tiny sepia parchment icon with skull
 export const WantedIcon = () => `${base}${encodeURIComponent(
   `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' shape-rendering='crispEdges'>

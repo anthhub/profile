@@ -132,9 +132,28 @@ export default function ArcadeCabinet({ variant = "framed" }: { variant?: Varian
     // Track hp locally so closures stay in sync as rounds schedule
     let currentHp1 = 100;
     let currentHp2 = 100;
+    let finished = false;
+
+    // Use fighter args directly (not React state) to avoid stale-closure bug:
+    // setTimeout closures captured `p1`/`p2` BEFORE setP1/setP2 took effect.
+    const doFinish = () => {
+      if (finished) return;
+      finished = true;
+      const won = currentHp1 >= currentHp2 ? a : b;
+      setHp1(currentHp1);
+      setHp2(currentHp2);
+      setAttacking(null);
+      setPhase("ko");
+      setFlash("ko");
+      setWinner(won);
+      if (won.id === a.id) setWins((w) => w + 1);
+      else setLosses((l) => l + 1);
+      later(() => setFlash(null), 1400);
+    };
 
     const schedule = (delay: number, attacker: "p1" | "p2") => {
       later(() => {
+        if (finished) return;
         setAttacking(attacker);
         const dmg =
           attacker === "p1" ? attackDmg(a, b) : attackDmg(b, a);
@@ -149,9 +168,9 @@ export default function ArcadeCabinet({ variant = "framed" }: { variant?: Varian
         }
         later(() => setAttacking(null), 360);
 
-        // End if someone is out
+        // End immediately if someone is out
         if (currentHp1 <= 0 || currentHp2 <= 0) {
-          later(() => finish(currentHp1, currentHp2), 500);
+          later(doFinish, 600);
         }
       }, delay);
     };
@@ -161,17 +180,7 @@ export default function ArcadeCabinet({ variant = "framed" }: { variant?: Varian
       schedule(500 + r * 900, r % 2 === 0 ? "p1" : "p2");
     }
     // Force finish after last scheduled attack even if both still have HP
-    later(() => finish(currentHp1, currentHp2), 500 + 6 * 900 + 500);
-  };
-
-  const finish = (h1: number, h2: number) => {
-    setPhase("ko");
-    setFlash("ko");
-    const won = h1 >= h2 ? p1 : p2;
-    setWinner(won);
-    if (won && p1 && won.id === p1.id) setWins((w) => w + 1);
-    else if (won && p2 && won.id === p2.id) setLosses((l) => l + 1);
-    later(() => setFlash(null), 1400);
+    later(doFinish, 500 + 6 * 900 + 400);
   };
 
   // Keyboard support — navigate with arrows, Enter/Space to pick, Esc to reset

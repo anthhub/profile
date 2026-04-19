@@ -3,60 +3,65 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --fg: 230 237 243;
+    --bg: 10 15 26;
+  }
   html {
     scroll-behavior: smooth;
   }
   body {
-    @apply bg-ink text-soft font-sans antialiased;
+    @apply font-sans antialiased text-soft;
+    color: rgb(var(--fg));
     background:
-      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(255, 0, 110, 0.15), transparent),
-      radial-gradient(ellipse 60% 40% at 80% 30%, rgba(131, 56, 236, 0.1), transparent),
-      radial-gradient(ellipse 60% 40% at 20% 60%, rgba(0, 245, 255, 0.08), transparent),
-      #0d1117;
+      radial-gradient(ellipse 70% 50% at 20% 0%, rgba(59, 130, 246, 0.12), transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 20%, rgba(168, 85, 247, 0.08), transparent 60%),
+      radial-gradient(ellipse 60% 50% at 50% 100%, rgba(16, 185, 129, 0.06), transparent 70%),
+      rgb(var(--bg));
     background-attachment: fixed;
+    min-height: 100vh;
   }
   ::selection {
-    @apply bg-magenta/30 text-soft;
+    background: rgba(59, 130, 246, 0.3);
   }
 }
 
 @layer utilities {
-  .text-gradient {
-    background: linear-gradient(90deg, #ff006e, #8338ec, #00f5ff, #ff006e);
+  .gradient-text {
+    background: linear-gradient(90deg, #60a5fa, #a78bfa, #f472b6, #60a5fa);
     background-size: 300% 100%;
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
-  .glow-pink {
-    box-shadow: 0 0 40px rgba(255, 0, 110, 0.35);
+  .shimmer-text {
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.7), transparent);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: shimmer 2.8s linear infinite;
   }
-  .glow-cyan {
-    box-shadow: 0 0 40px rgba(0, 245, 255, 0.35);
+  .card-glass {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01));
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px);
   }
-  .grain::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    opacity: 0.035;
-    mix-blend-mode: overlay;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' /%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' /%3E%3C/svg%3E");
-    z-index: 1000;
+  .ring-soft {
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 24px 60px -20px rgba(59, 130, 246, 0.15);
   }
 }
 
-/* Scrollbar */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #0d1117;
+  background: rgb(var(--bg));
 }
 ::-webkit-scrollbar-thumb {
-  background: #ff006e40;
-  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #ff006e80;
+  background: rgba(255, 255, 255, 0.2);
 }

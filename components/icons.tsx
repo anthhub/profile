@@ -57,6 +57,25 @@ export const MailIcon = () => `${base}${encodeURIComponent(
   </svg>`,
 )}`;
 
+// WANTED.exe — a tiny sepia parchment icon with skull
+export const WantedIcon = () => `${base}${encodeURIComponent(
+  `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' shape-rendering='crispEdges'>
+    <rect x='4' y='2' width='24' height='28' fill='#e8d4a2' stroke='#3b2510' stroke-width='1'/>
+    <rect x='4' y='2' width='24' height='3' fill='#d4b877'/>
+    <rect x='4' y='27' width='24' height='3' fill='#d4b877'/>
+    <rect x='6' y='7' width='20' height='1' fill='#3b2510'/>
+    <rect x='6' y='9' width='20' height='1' fill='#3b2510'/>
+    <text x='16' y='15' font-family='serif' font-size='5' font-weight='900' fill='#3b2510' text-anchor='middle'>WANT</text>
+    <circle cx='16' cy='21' r='3' fill='#fff' stroke='#3b2510'/>
+    <rect x='14' y='20' width='1' height='1' fill='#000'/>
+    <rect x='17' y='20' width='1' height='1' fill='#000'/>
+    <rect x='15' y='23' width='2' height='1' fill='#000'/>
+    <rect x='13' y='25' width='1' height='1' fill='#3b2510'/>
+    <rect x='15' y='25' width='2' height='1' fill='#3b2510'/>
+    <rect x='18' y='25' width='1' height='1' fill='#3b2510'/>
+  </svg>`,
+)}`;
+
 // Usage: <img src={FolderIcon()} /> or <img src={DocIcon("#ffaa00")} />
 export const IconImg: React.FC<{ src: string; alt: string; size?: number }> = ({ src, alt, size = 32 }) => (
   // eslint-disable-next-line @next/next/no-img-element

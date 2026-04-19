@@ -9,13 +9,16 @@ import {
   DocIcon,
   MailIcon,
   StartLogo,
+  WantedIcon,
 } from "@/components/icons";
+import WantedPoster from "@/components/wanted-poster";
 
 type WindowKind =
   | { type: "category"; key: string }
   | { type: "repo"; repo: Repo }
   | { type: "about" }
-  | { type: "readme" };
+  | { type: "readme" }
+  | { type: "wanted" };
 
 type OpenWindow = {
   id: string;
@@ -41,6 +44,7 @@ const clippyMessages = [
   "💡 Tip: Engineering Library has my open-source libs (Matrox, Forwarder…)",
   "🧩 VScode Plugin → editor extensions I published to the marketplace",
   "🎨 Creative Application → fun Web / WASM experiments",
+  "☠️ Secret: open WANTED.exe for the One Piece bounty poster!",
   "⌨️ Press ESC to close any window. Click Start for the full menu.",
   "📺 Want full CRT vibes? Start → \"CRT scanlines\"",
 ];
@@ -205,6 +209,12 @@ export default function WinDesktop({ data }: { data: Categories }) {
         icon = ComputerIcon();
         w = 420;
         h = 260;
+      } else if (kind.type === "wanted") {
+        id = "wanted";
+        title = "WANTED.exe";
+        icon = WantedIcon();
+        w = 600;
+        h = 560;
       } else {
         id = "readme";
         title = "README.txt";
@@ -269,6 +279,12 @@ export default function WinDesktop({ data }: { data: Categories }) {
       label: "GitHub",
       img: GithubIcon(),
       onOpen: () => window.open("https://github.com/anthhub", "_blank"),
+    },
+    {
+      id: "icon-wanted",
+      label: "WANTED.exe",
+      img: WantedIcon(),
+      onOpen: () => openWindow({ type: "wanted" }),
     },
     {
       id: "icon-mail",
@@ -432,6 +448,11 @@ export default function WinDesktop({ data }: { data: Categories }) {
               <img src={DocIcon("#888")} alt="" />
               README.txt
             </div>
+            <div className="start-menu-item" onClick={() => openWindow({ type: "wanted" })}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={WantedIcon()} alt="" />
+              WANTED.exe
+            </div>
             <div
               className="start-menu-item"
               onClick={() => window.open("https://github.com/anthhub", "_blank")}
@@ -574,6 +595,33 @@ function WindowContent({
           {r.url && r.url !== r.github && (
             <button onClick={() => window.open(r.url, "_blank")}>Visit...</button>
           )}
+        </div>
+      </div>
+    );
+  }
+
+  if (kind.type === "wanted") {
+    return (
+      <div className="window-body" style={{ padding: 0, background: "#2b1706" }}>
+        <WantedPoster variant="framed" />
+        <div
+          style={{
+            position: "sticky",
+            bottom: 0,
+            padding: "6px 10px",
+            background: "#c0c0c0",
+            borderTop: "1px solid #808080",
+            display: "flex",
+            gap: 8,
+            justifyContent: "flex-end",
+          }}
+        >
+          <button onClick={() => window.open("/wanted", "_blank")}>
+            Open fullscreen ↗
+          </button>
+          <button onClick={() => window.open("https://github.com/anthhub", "_blank")}>
+            Turn in pirate
+          </button>
         </div>
       </div>
     );

@@ -574,3 +574,510 @@ body {
     height: 56px !important;
   }
 }
+
+/* ============================================
+   Wanted poster (One Piece style)
+   Variants:
+     .wanted-fullscreen  — standalone /wanted page
+     .wanted-framed      — inside a Win98 window
+     .wanted-compact     — small card variant
+   ============================================ */
+
+.wanted-poster {
+  --paper: #e8d4a2;
+  --paper-edge: #c9ae6e;
+  --ink: #3b2510;
+  --ink-soft: #5a3a1f;
+  --accent: #7a1f1f;
+  --gold: #b88a2c;
+  font-family: "Cinzel", "Playfair Display", "EB Garamond", "Baskerville", serif;
+  color: var(--ink);
+}
+
+.wanted-paper {
+  position: relative;
+  background:
+    radial-gradient(ellipse at 30% 10%, rgba(255, 240, 200, 0.55), transparent 60%),
+    radial-gradient(ellipse at 80% 90%, rgba(110, 70, 20, 0.25), transparent 70%),
+    repeating-linear-gradient(
+      -12deg,
+      rgba(130, 90, 40, 0.04) 0 2px,
+      transparent 2px 4px
+    ),
+    linear-gradient(180deg, #ecd7a5 0%, #d8b977 100%);
+  box-shadow:
+    inset 0 0 80px rgba(60, 30, 10, 0.45),
+    inset 0 0 20px rgba(60, 30, 10, 0.25),
+    0 8px 40px rgba(0, 0, 0, 0.45);
+  border: 2px solid rgba(59, 37, 16, 0.5);
+  padding: 28px 28px 20px;
+}
+.wanted-paper::before {
+  /* stains */
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 15% 80%, rgba(80, 40, 10, 0.18) 0 14px, transparent 18px),
+    radial-gradient(circle at 85% 25%, rgba(80, 40, 10, 0.14) 0 10px, transparent 14px),
+    radial-gradient(circle at 60% 60%, rgba(80, 40, 10, 0.1) 0 20px, transparent 28px);
+  pointer-events: none;
+  mix-blend-mode: multiply;
+}
+.wanted-paper::after {
+  /* grain */
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    repeating-radial-gradient(
+      circle at 50% 50%,
+      rgba(59, 37, 16, 0.04) 0 1px,
+      transparent 1px 3px
+    );
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+/* Header */
+.wanted-header {
+  text-align: center;
+  font-family: "Cinzel", "Playfair Display", "Baskerville", serif;
+  font-weight: 900;
+  font-size: 56px;
+  letter-spacing: 8px;
+  color: var(--ink);
+  text-shadow:
+    1px 1px 0 rgba(60, 30, 10, 0.15),
+    -1px -1px 0 rgba(255, 230, 180, 0.6);
+  padding: 2px 0 8px;
+  border-top: 4px double var(--ink);
+  border-bottom: 4px double var(--ink);
+  margin-bottom: 14px;
+  position: relative;
+  z-index: 1;
+}
+.wanted-compact .wanted-header {
+  font-size: 32px;
+  letter-spacing: 4px;
+  border-top-width: 3px;
+  border-bottom-width: 3px;
+}
+.wanted-framed .wanted-header {
+  font-size: 40px;
+  letter-spacing: 6px;
+}
+
+/* Photo frame */
+.wanted-frame {
+  position: relative;
+  margin: 0 auto 12px;
+  padding: 8px;
+  max-width: 320px;
+  background:
+    linear-gradient(135deg, #a67a2c, #6b4a14);
+  border: 3px solid #3b2510;
+  box-shadow:
+    inset 0 0 6px rgba(0, 0, 0, 0.5),
+    0 3px 0 rgba(0, 0, 0, 0.15);
+  z-index: 1;
+}
+.wanted-frame-inner {
+  position: relative;
+  background: #d5b987;
+  border: 1px solid #3b2510;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.wanted-avatar {
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  object-fit: contain;
+  filter: sepia(0.35) contrast(1.05);
+}
+.wanted-photo-grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(0deg, rgba(59, 37, 16, 0.06) 0 1px, transparent 1px 3px),
+    radial-gradient(ellipse at center, transparent 40%, rgba(59, 37, 16, 0.4) 100%);
+  mix-blend-mode: multiply;
+}
+.wanted-photo-label {
+  position: absolute;
+  bottom: 4px;
+  right: 6px;
+  font-family: "Courier New", monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: #3b2510;
+  background: rgba(232, 212, 162, 0.7);
+  padding: 1px 4px;
+  text-transform: uppercase;
+}
+
+.wanted-compact .wanted-frame {
+  max-width: 160px;
+}
+.wanted-framed .wanted-frame {
+  max-width: 220px;
+}
+
+/* Dead or Alive */
+.wanted-dead-alive {
+  text-align: center;
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: 10px;
+  color: var(--ink);
+  margin: 6px 0 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+  z-index: 1;
+}
+.wanted-rule {
+  flex: 1;
+  max-width: 80px;
+  height: 2px;
+  background: var(--ink);
+  opacity: 0.7;
+}
+.wanted-compact .wanted-dead-alive {
+  font-size: 14px;
+  letter-spacing: 4px;
+}
+.wanted-framed .wanted-dead-alive {
+  font-size: 18px;
+  letter-spacing: 6px;
+}
+
+/* Name */
+.wanted-name {
+  text-align: center;
+  font-family: "Cinzel", "Playfair Display", serif;
+  font-weight: 900;
+  font-size: 52px;
+  letter-spacing: 4px;
+  color: var(--ink);
+  margin: 4px 0 6px;
+  text-shadow: 1px 1px 0 rgba(255, 230, 180, 0.4);
+  position: relative;
+  z-index: 1;
+}
+.wanted-compact .wanted-name {
+  font-size: 30px;
+}
+.wanted-framed .wanted-name {
+  font-size: 38px;
+}
+
+/* Bounty */
+.wanted-bounty {
+  text-align: center;
+  font-family: "Cinzel", "Playfair Display", serif;
+  font-weight: 800;
+  font-size: 26px;
+  letter-spacing: 3px;
+  color: var(--ink);
+  margin: 2px 0 14px;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+  z-index: 1;
+}
+.wanted-berry {
+  font-size: 30px;
+  color: var(--accent);
+  font-weight: 900;
+}
+.wanted-amount {
+  color: var(--ink);
+}
+.wanted-dash {
+  color: var(--ink);
+}
+.wanted-compact .wanted-bounty {
+  font-size: 16px;
+}
+.wanted-framed .wanted-bounty {
+  font-size: 22px;
+}
+
+/* Crimes */
+.wanted-crimes {
+  position: relative;
+  z-index: 1;
+  list-style: none;
+  padding: 8px 18px;
+  margin: 4px auto 10px;
+  background: rgba(255, 245, 215, 0.35);
+  border-top: 1px dashed var(--ink);
+  border-bottom: 1px dashed var(--ink);
+  max-width: 560px;
+  font-family: "Courier New", "Courier", monospace;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+.wanted-crimes li {
+  padding-left: 16px;
+  position: relative;
+}
+.wanted-crimes li::before {
+  content: "☠";
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+}
+.wanted-framed .wanted-crimes {
+  font-size: 11px;
+  padding: 6px 14px;
+}
+
+/* Stats strip */
+.wanted-stats {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin: 8px 0 12px;
+  padding: 8px 4px;
+  border: 1px solid var(--ink);
+  background: rgba(255, 245, 215, 0.35);
+}
+.wanted-stat {
+  text-align: center;
+  padding: 4px;
+}
+.wanted-stat-value {
+  font-family: "Cinzel", serif;
+  font-weight: 800;
+  font-size: 18px;
+  color: var(--accent);
+}
+.wanted-stat-label {
+  font-family: "Courier New", monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+.wanted-framed .wanted-stat-value {
+  font-size: 14px;
+}
+.wanted-framed .wanted-stat-label {
+  font-size: 9px;
+}
+
+/* Footer */
+.wanted-footer {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: "Cinzel", serif;
+  font-weight: 700;
+  margin-top: 10px;
+  border-top: 2px solid var(--ink);
+  padding-top: 10px;
+  color: var(--ink);
+}
+.wanted-marine {
+  font-size: 22px;
+  letter-spacing: 6px;
+}
+.wanted-marine-seal {
+  font-size: 22px;
+  color: var(--accent);
+}
+.wanted-marine-sub {
+  font-family: "Courier New", monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  opacity: 0.75;
+}
+.wanted-framed .wanted-marine {
+  font-size: 16px;
+  letter-spacing: 4px;
+}
+
+/* Actions (fullscreen only) */
+.wanted-actions {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 14px;
+}
+.wanted-btn {
+  display: inline-block;
+  padding: 10px 18px;
+  font-family: "Cinzel", serif;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 2px;
+  text-decoration: none;
+  background: var(--accent);
+  color: #fff3c4;
+  border: 2px solid #3b2510;
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.wanted-btn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.4);
+}
+.wanted-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
+}
+.wanted-btn.ghost {
+  background: transparent;
+  color: var(--ink);
+  box-shadow: 2px 2px 0 rgba(59, 37, 16, 0.2);
+}
+
+/* Torn edges */
+.wanted-tear {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 12px;
+  background:
+    radial-gradient(circle at 4px 6px, transparent 4px, var(--paper-edge) 5px) repeat-x 0 0 / 10px 12px;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  opacity: 0.6;
+}
+.wanted-tear-top {
+  top: -2px;
+}
+.wanted-tear-bottom {
+  bottom: -2px;
+  transform: scaleY(-1);
+}
+
+/* Corner ornaments */
+.wanted-corner {
+  position: absolute;
+  width: 46px;
+  height: 46px;
+  opacity: 0.75;
+  z-index: 2;
+}
+.wanted-corner-tl {
+  top: 6px;
+  left: 6px;
+}
+.wanted-corner-tr {
+  top: 6px;
+  right: 6px;
+  transform: scaleX(-1);
+}
+.wanted-corner-bl {
+  bottom: 6px;
+  left: 6px;
+  transform: scaleY(-1);
+}
+.wanted-corner-br {
+  bottom: 6px;
+  right: 6px;
+  transform: scale(-1, -1);
+}
+
+/* Fullscreen variant */
+.wanted-fullscreen {
+  min-height: 100vh;
+  padding: 36px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(ellipse at center, #3a2613 0%, #1a0f06 100%);
+}
+.wanted-fullscreen .wanted-paper {
+  max-width: 720px;
+  width: 100%;
+  transform: rotate(-0.8deg);
+  animation: posterSway 6s ease-in-out infinite alternate;
+}
+@keyframes posterSway {
+  from {
+    transform: rotate(-0.8deg) translateY(0);
+  }
+  to {
+    transform: rotate(0.8deg) translateY(-4px);
+  }
+}
+
+/* Framed (inside Win98 window) */
+.wanted-framed {
+  padding: 8px;
+  background: #7a4a1e;
+  background:
+    radial-gradient(ellipse at center, #5a3815 0%, #2b1706 100%);
+  overflow: auto;
+  height: 100%;
+  box-sizing: border-box;
+}
+.wanted-framed .wanted-paper {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 18px 18px 12px;
+}
+
+/* Compact */
+.wanted-compact .wanted-paper {
+  padding: 14px;
+  max-width: 260px;
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .wanted-fullscreen {
+    padding: 16px 8px;
+  }
+  .wanted-fullscreen .wanted-header {
+    font-size: 40px;
+    letter-spacing: 4px;
+  }
+  .wanted-fullscreen .wanted-name {
+    font-size: 32px;
+  }
+  .wanted-fullscreen .wanted-bounty {
+    font-size: 18px;
+  }
+  .wanted-fullscreen .wanted-dead-alive {
+    font-size: 16px;
+    letter-spacing: 4px;
+  }
+  .wanted-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .wanted-crimes {
+    font-size: 12px;
+  }
+  .wanted-actions {
+    flex-direction: column;
+  }
+  .wanted-corner {
+    width: 28px;
+    height: 28px;
+  }
+}

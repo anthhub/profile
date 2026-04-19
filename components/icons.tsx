@@ -57,6 +57,49 @@ export const MailIcon = () => `${base}${encodeURIComponent(
   </svg>`,
 )}`;
 
+// TERMINAL.exe — black screen with green prompt
+export const TerminalIcon = () => `${base}${encodeURIComponent(
+  `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' shape-rendering='crispEdges'>
+    <rect x='3' y='5' width='26' height='22' fill='#000' stroke='#c0c0c0' stroke-width='1'/>
+    <rect x='3' y='5' width='26' height='3' fill='#c0c0c0'/>
+    <rect x='5' y='6' width='1' height='1' fill='#ff3b30'/>
+    <rect x='7' y='6' width='1' height='1' fill='#fde047'/>
+    <rect x='9' y='6' width='1' height='1' fill='#34c759'/>
+    <text x='6' y='17' font-family='monospace' font-size='6' fill='#4ade80' font-weight='bold'>$</text>
+    <rect x='11' y='12' width='2' height='1' fill='#4ade80'/>
+    <rect x='14' y='12' width='4' height='1' fill='#4ade80'/>
+    <rect x='6' y='16' width='12' height='1' fill='#4ade80'/>
+    <rect x='6' y='19' width='8' height='1' fill='#4ade80'/>
+    <rect x='15' y='19' width='2' height='1' fill='#4ade80' opacity='0.7'/>
+  </svg>`,
+)}`;
+
+// TROPHY.exe — gold trophy for tournament
+export const TrophyIcon = () => `${base}${encodeURIComponent(
+  `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' shape-rendering='crispEdges'>
+    <rect x='8' y='5' width='16' height='10' fill='#e5c200' stroke='#7a5a0a'/>
+    <rect x='8' y='5' width='16' height='2' fill='#fde047'/>
+    <rect x='4' y='7' width='4' height='6' fill='#e5c200' stroke='#7a5a0a'/>
+    <rect x='24' y='7' width='4' height='6' fill='#e5c200' stroke='#7a5a0a'/>
+    <rect x='14' y='15' width='4' height='5' fill='#b88a2c' stroke='#7a5a0a'/>
+    <rect x='10' y='20' width='12' height='3' fill='#b88a2c' stroke='#7a5a0a'/>
+    <rect x='8' y='23' width='16' height='3' fill='#6b4a14' stroke='#3b2510'/>
+    <text x='16' y='13' font-family='serif' font-size='7' fill='#7a5a0a' text-anchor='middle' font-weight='900'>1</text>
+  </svg>`,
+)}`;
+
+// PAINT.exe — palette icon
+export const PaintIcon = () => `${base}${encodeURIComponent(
+  `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' shape-rendering='crispEdges'>
+    <path fill='#c0c0c0' stroke='#000' d='M16 3 C8 3 3 9 3 16 c0 6 4 10 9 10 c2 0 3 -2 3 -3 c0 -1 0 -2 1 -2 h3 c6 0 10 -4 10 -10 c0 -4 -5 -8 -13 -8 z'/>
+    <circle cx='9' cy='12' r='2' fill='#ff3b30'/>
+    <circle cx='13' cy='8' r='2' fill='#fde047'/>
+    <circle cx='19' cy='8' r='2' fill='#22d3ee'/>
+    <circle cx='23' cy='12' r='2' fill='#a855f7'/>
+    <circle cx='23' cy='17' r='2' fill='#34c759'/>
+  </svg>`,
+)}`;
+
 // ARCADE.exe — a tiny arcade cabinet icon
 export const ArcadeIcon = () => `${base}${encodeURIComponent(
   `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' shape-rendering='crispEdges'>

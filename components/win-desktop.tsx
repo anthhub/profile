@@ -11,9 +11,15 @@ import {
   StartLogo,
   WantedIcon,
   ArcadeIcon,
+  TerminalIcon,
+  TrophyIcon,
+  PaintIcon,
 } from "@/components/icons";
 import WantedPoster from "@/components/wanted-poster";
 import ArcadeCabinet from "@/components/arcade-cabinet";
+import TerminalApp from "@/components/terminal-app";
+import Tournament from "@/components/tournament";
+import PaintApp from "@/components/paint-app";
 import {
   CursorTrail,
   AmbientParticles,
@@ -22,13 +28,15 @@ import {
   BSOD,
 } from "@/components/desktop-fx";
 
-type Wallpaper = "teal" | "sunset" | "space" | "matrix";
+type Wallpaper = "teal" | "sunset" | "space" | "matrix" | "custom";
 const WALLPAPERS: Record<Wallpaper, string> = {
   teal: "Teal (Classic)",
   sunset: "Sunset Orange",
   space: "Deep Space",
   matrix: "Matrix Green",
+  custom: "My Creation",
 };
+const CUSTOM_WP_KEY = "anthhub-custom-wallpaper";
 
 type WindowKind =
   | { type: "category"; key: string }
@@ -36,7 +44,10 @@ type WindowKind =
   | { type: "about" }
   | { type: "readme" }
   | { type: "wanted" }
-  | { type: "arcade" };
+  | { type: "arcade" }
+  | { type: "terminal" }
+  | { type: "tournament" }
+  | { type: "paint" };
 
 type OpenWindow = {
   id: string;
@@ -72,6 +83,9 @@ const clippyMessages = [
   "🕹️ Try ARCADE.exe — pick your fighter from 12 pixel-art languages!",
   "🎮 Power users: try the Konami code ↑↑↓↓←→←→BA 🎉",
   "🖱️ Right-click the desktop for wallpapers, scanlines & properties",
+  "⌨️ Nerd? Open TERMINAL.exe and type `help` — real commands inside.",
+  "🏆 TOURNAMENT.exe runs an auto-sim bracket of all 12 fighters.",
+  "🎨 PAINT.exe → draw something → Save as Wallpaper = your own desktop BG!",
   "⌨️ Press ESC to close any window. Click Start for the full menu.",
   "📺 Want full CRT vibes? Start → \"CRT scanlines\"",
 ];
@@ -91,6 +105,31 @@ export default function WinDesktop({ data }: { data: Categories }) {
   const [party, setParty] = useState(false);
   const [bsod, setBsod] = useState(false);
   const [wallpaper, setWallpaper] = useState<Wallpaper>("teal");
+  const [customWp, setCustomWp] = useState<string | null>(null);
+
+  // Load any previously-painted custom wallpaper on boot
+  useEffect(() => {
+    try {
+      const v = localStorage.getItem(CUSTOM_WP_KEY);
+      if (v) setCustomWp(v);
+    } catch {}
+  }, []);
+
+  // Apply custom wallpaper via CSS variable on the root wrapper
+  useEffect(() => {
+    const root = document.documentElement;
+    if (customWp && wallpaper === "custom") {
+      root.style.setProperty("--custom-wp", `url("${customWp}")`);
+    }
+  }, [customWp, wallpaper]);
+
+  const handleSavePainting = (dataUrl: string) => {
+    try {
+      localStorage.setItem(CUSTOM_WP_KEY, dataUrl);
+    } catch {}
+    setCustomWp(dataUrl);
+    setWallpaper("custom");
+  };
   const [startClicks, setStartClicks] = useState<number[]>([]);
   const [contextMenu, setContextMenu] = useState<
     | { x: number; y: number; sub?: "wallpaper" | null }
@@ -400,6 +439,24 @@ export default function WinDesktop({ data }: { data: Categories }) {
         icon = ArcadeIcon();
         w = 720;
         h = 560;
+      } else if (kind.type === "terminal") {
+        id = "terminal";
+        title = "TERMINAL.exe — anthhub@98";
+        icon = TerminalIcon();
+        w = 620;
+        h = 420;
+      } else if (kind.type === "tournament") {
+        id = "tournament";
+        title = "TOURNAMENT.exe — Championship";
+        icon = TrophyIcon();
+        w = 820;
+        h = 560;
+      } else if (kind.type === "paint") {
+        id = "paint";
+        title = "PAINT.exe — Pixel Canvas";
+        icon = PaintIcon();
+        w = 700;
+        h = 560;
       } else {
         id = "readme";
         title = "README.txt";
@@ -518,10 +575,28 @@ export default function WinDesktop({ data }: { data: Categories }) {
       onOpen: () => openWindow({ type: "arcade" }),
     },
     {
+      id: "icon-tournament",
+      label: "TOURNAMENT",
+      img: TrophyIcon(),
+      onOpen: () => openWindow({ type: "tournament" }),
+    },
+    {
       id: "icon-wanted",
       label: "WANTED.exe",
       img: WantedIcon(),
       onOpen: () => openWindow({ type: "wanted" }),
+    },
+    {
+      id: "icon-terminal",
+      label: "TERMINAL.exe",
+      img: TerminalIcon(),
+      onOpen: () => openWindow({ type: "terminal" }),
+    },
+    {
+      id: "icon-paint",
+      label: "PAINT.exe",
+      img: PaintIcon(),
+      onOpen: () => openWindow({ type: "paint" }),
     },
     {
       id: "icon-mail",
@@ -664,7 +739,24 @@ export default function WinDesktop({ data }: { data: Categories }) {
                   <button aria-label="Close" onClick={() => closeWindow(w.id)} />
                 </div>
               </div>
-              <WindowContent kind={w.kind} data={data} onOpenRepo={(r) => openWindow({ type: "repo", repo: r })} />
+              <WindowContent
+                kind={w.kind}
+                data={data}
+                onOpenRepo={(r) => openWindow({ type: "repo", repo: r })}
+                onOpen={(id) => {
+                  if (id === "arcade") openWindow({ type: "arcade" });
+                  else if (id === "wanted") openWindow({ type: "wanted" });
+                  else if (id === "tournament") openWindow({ type: "tournament" });
+                  else if (id === "paint") openWindow({ type: "paint" });
+                  else if (id === "readme") openWindow({ type: "readme" });
+                  else if (id === "about") openWindow({ type: "about" });
+                }}
+                onTriggerParty={() => setParty(true)}
+                onTriggerBSOD={() => setBsod(true)}
+                onWallpaper={(wp) => setWallpaper(wp)}
+                onCloseSelf={(id) => closeWindow(id)}
+                onSavePainting={handleSavePainting}
+              />
             </div>
           </Rnd>
         ))}
@@ -744,6 +836,21 @@ export default function WinDesktop({ data }: { data: Categories }) {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={ArcadeIcon()} alt="" />
               ARCADE.exe
+            </div>
+            <div className="start-menu-item" onClick={() => openWindow({ type: "tournament" })}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={TrophyIcon()} alt="" />
+              TOURNAMENT
+            </div>
+            <div className="start-menu-item" onClick={() => openWindow({ type: "terminal" })}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={TerminalIcon()} alt="" />
+              TERMINAL.exe
+            </div>
+            <div className="start-menu-item" onClick={() => openWindow({ type: "paint" })}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={PaintIcon()} alt="" />
+              PAINT.exe
             </div>
             <div className="start-menu-item" onClick={() => openWindow({ type: "wanted" })}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -904,10 +1011,22 @@ function WindowContent({
   kind,
   data,
   onOpenRepo,
+  onOpen,
+  onTriggerParty,
+  onTriggerBSOD,
+  onWallpaper,
+  onCloseSelf,
+  onSavePainting,
 }: {
   kind: WindowKind;
   data: Categories;
   onOpenRepo: (r: Repo) => void;
+  onOpen: (id: "arcade" | "wanted" | "tournament" | "paint" | "readme" | "about") => void;
+  onTriggerParty: () => void;
+  onTriggerBSOD: () => void;
+  onWallpaper: (w: Wallpaper) => void;
+  onCloseSelf: (id: string) => void;
+  onSavePainting: (url: string) => void;
 }) {
   if (kind.type === "category") {
     const items = data[kind.key] || [];
@@ -968,6 +1087,44 @@ function WindowContent({
             <button onClick={() => window.open(r.url, "_blank")}>Visit...</button>
           )}
         </div>
+      </div>
+    );
+  }
+
+  if (kind.type === "terminal") {
+    return (
+      <div className="window-body" style={{ padding: 0, background: "#000" }}>
+        <TerminalApp
+          data={data}
+          onOpen={(id) => {
+            if (id === "arcade") onOpen("arcade");
+            else if (id === "wanted") onOpen("wanted");
+            else if (id === "tournament") onOpen("tournament");
+            else if (id === "paint") onOpen("paint");
+            else if (id === "readme") onOpen("readme");
+            else if (id === "about") onOpen("about");
+          }}
+          onTriggerParty={onTriggerParty}
+          onTriggerBSOD={onTriggerBSOD}
+          onWallpaper={(n) => onWallpaper(n as Wallpaper)}
+          onClose={() => onCloseSelf("terminal")}
+        />
+      </div>
+    );
+  }
+
+  if (kind.type === "tournament") {
+    return (
+      <div className="window-body" style={{ padding: 0, background: "#05050f" }}>
+        <Tournament />
+      </div>
+    );
+  }
+
+  if (kind.type === "paint") {
+    return (
+      <div className="window-body" style={{ padding: 0, background: "#dcdcdc" }}>
+        <PaintApp onSave={onSavePainting} />
       </div>
     );
   }

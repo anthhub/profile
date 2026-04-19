@@ -1,9 +1,6 @@
 import { readFile } from "fs/promises";
 import { join } from "path";
-import Header from "@/components/header";
-import Carousel from "@/components/carousel";
-import Article from "@/components/article";
-import Tips from "@/components/tips";
+import WinDesktop from "@/components/win-desktop";
 import type { Categories } from "@/lib/data";
 
 async function loadRepos(): Promise<Categories> {
@@ -14,14 +11,5 @@ async function loadRepos(): Promise<Categories> {
 
 export default async function HomePage() {
   const data = await loadRepos();
-  return (
-    <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-      <Header />
-      <div className="mb-16">
-        <Carousel />
-      </div>
-      <Article data={data} />
-      <Tips />
-    </main>
-  );
+  return <WinDesktop data={data} />;
 }

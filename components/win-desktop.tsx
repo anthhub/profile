@@ -1,0 +1,497 @@
+"use client";
+import { useState, useEffect, useCallback } from "react";
+import { Rnd } from "react-rnd";
+import type { Categories, Repo } from "@/lib/data";
+import {
+  FolderIcon,
+  GithubIcon,
+  ComputerIcon,
+  DocIcon,
+  MailIcon,
+  StartLogo,
+} from "@/components/icons";
+
+type WindowKind =
+  | { type: "category"; key: string }
+  | { type: "repo"; repo: Repo }
+  | { type: "about" }
+  | { type: "readme" };
+
+type OpenWindow = {
+  id: string;
+  title: string;
+  icon: string;
+  kind: WindowKind;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  z: number;
+  minimized?: boolean;
+};
+
+const categoryFolderColor: Record<string, string> = {
+  "Engineering Library": "#f4d76b",
+  "VScode Plugin": "#6ad0f4",
+  "Creative Application": "#f29abb",
+};
+
+export default function WinDesktop({ data }: { data: Categories }) {
+  const [windows, setWindows] = useState<OpenWindow[]>([]);
+  const [zCounter, setZCounter] = useState(100);
+  const [startOpen, setStartOpen] = useState(false);
+  const [selectedIcon, setSelectedIcon] = useState<string | null>(null);
+  const [clock, setClock] = useState("");
+  const [booted, setBooted] = useState(false);
+  const [scanlines, setScanlines] = useState(false);
+
+  // Boot screen (show for 1.2s)
+  useEffect(() => {
+    const t = setTimeout(() => setBooted(true), 1200);
+    return () => clearTimeout(t);
+  }, []);
+
+  // Live clock
+  useEffect(() => {
+    const update = () => {
+      const d = new Date();
+      const hh = d.getHours() % 12 || 12;
+      const mm = String(d.getMinutes()).padStart(2, "0");
+      const ampm = d.getHours() >= 12 ? "PM" : "AM";
+      setClock(`${hh}:${mm} ${ampm}`);
+    };
+    update();
+    const i = setInterval(update, 10000);
+    return () => clearInterval(i);
+  }, []);
+
+  const focusWindow = (id: string) => {
+    const next = zCounter + 1;
+    setZCounter(next);
+    setWindows((ws) =>
+      ws.map((w) => (w.id === id ? { ...w, z: next, minimized: false } : w)),
+    );
+  };
+
+  const openWindow = useCallback(
+    (kind: WindowKind) => {
+      let id: string;
+      let title: string;
+      let icon: string;
+      let w = 520;
+      let h = 380;
+      let x = 80;
+      let y = 60;
+
+      if (kind.type === "category") {
+        id = `cat-${kind.key}`;
+        title = kind.key;
+        icon = FolderIcon(categoryFolderColor[kind.key] ?? "#f4d76b");
+        w = 560;
+        h = 420;
+      } else if (kind.type === "repo") {
+        id = `repo-${kind.repo.name}`;
+        title = kind.repo.name;
+        icon = DocIcon("#4a6cd4");
+        w = 480;
+        h = 440;
+      } else if (kind.type === "about") {
+        id = "about";
+        title = "About anthhub.exe";
+        icon = ComputerIcon();
+        w = 420;
+        h = 260;
+      } else {
+        id = "readme";
+        title = "README.txt";
+        icon = DocIcon("#888");
+        w = 440;
+        h = 320;
+      }
+
+      setWindows((ws) => {
+        if (ws.find((o) => o.id === id)) {
+          return ws.map((o) => (o.id === id ? { ...o, minimized: false, z: zCounter + 1 } : o));
+        }
+        // Offset stack so new windows don't overlap perfectly
+        const offset = ws.length * 24;
+        return [
+          ...ws,
+          { id, title, icon, kind, x: x + offset, y: y + offset, w, h, z: zCounter + 1 },
+        ];
+      });
+      setZCounter((n) => n + 1);
+      setStartOpen(false);
+    },
+    [zCounter],
+  );
+
+  const closeWindow = (id: string) =>
+    setWindows((ws) => ws.filter((w) => w.id !== id));
+
+  const minimizeWindow = (id: string) =>
+    setWindows((ws) => ws.map((w) => (w.id === id ? { ...w, minimized: true } : w)));
+
+  // Click outside icons deselects
+  const onDesktopClick = () => {
+    setSelectedIcon(null);
+    setStartOpen(false);
+  };
+
+  if (!booted) return <BootScreen />;
+
+  const categoryKeys = Object.keys(data);
+  const desktopIcons = [
+    ...categoryKeys.map((k) => ({
+      id: `icon-${k}`,
+      label: k,
+      img: FolderIcon(categoryFolderColor[k] ?? "#f4d76b"),
+      onOpen: () => openWindow({ type: "category", key: k }),
+    })),
+    {
+      id: "icon-computer",
+      label: "My Computer",
+      img: ComputerIcon(),
+      onOpen: () => openWindow({ type: "about" }),
+    },
+    {
+      id: "icon-readme",
+      label: "README.txt",
+      img: DocIcon("#888"),
+      onOpen: () => openWindow({ type: "readme" }),
+    },
+    {
+      id: "icon-github",
+      label: "GitHub",
+      img: GithubIcon(),
+      onOpen: () => window.open("https://github.com/anthhub", "_blank"),
+    },
+    {
+      id: "icon-mail",
+      label: "Send Email",
+      img: MailIcon(),
+      onOpen: () => (window.location.href = "mailto:andyousiron@gmail.com"),
+    },
+  ];
+
+  return (
+    <div className={scanlines ? "scanlines" : ""}>
+      <div className="desktop" onClick={onDesktopClick}>
+        <div className="desktop-grid">
+          {desktopIcons.map((icon) => (
+            <DesktopIcon
+              key={icon.id}
+              label={icon.label}
+              src={icon.img}
+              selected={selectedIcon === icon.id}
+              onSelect={(e) => {
+                e.stopPropagation();
+                setSelectedIcon(icon.id);
+              }}
+              onOpen={icon.onOpen}
+            />
+          ))}
+        </div>
+
+        {windows.map((w) => !w.minimized && (
+          <Rnd
+            key={w.id}
+            default={{ x: w.x, y: w.y, width: w.w, height: w.h }}
+            minWidth={280}
+            minHeight={180}
+            bounds="parent"
+            dragHandleClassName="title-bar"
+            style={{ zIndex: w.z, display: w.minimized ? "none" : "block" }}
+            onMouseDown={() => focusWindow(w.id)}
+          >
+            <div className="window win-frame" style={{ width: "100%", height: "100%" }}>
+              <div className="title-bar">
+                <div className="title-bar-text" style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={w.icon} alt="" width={16} height={16} style={{ imageRendering: "pixelated" }} />
+                  <span>{w.title}</span>
+                </div>
+                <div className="title-bar-controls">
+                  <button aria-label="Minimize" onClick={() => minimizeWindow(w.id)} />
+                  <button aria-label="Maximize" />
+                  <button aria-label="Close" onClick={() => closeWindow(w.id)} />
+                </div>
+              </div>
+              <WindowContent kind={w.kind} data={data} onOpenRepo={(r) => openWindow({ type: "repo", repo: r })} />
+            </div>
+          </Rnd>
+        ))}
+      </div>
+
+      {/* Taskbar */}
+      <div className="taskbar" onClick={(e) => e.stopPropagation()}>
+        <button
+          className={`taskbar-start ${startOpen ? "active" : ""}`}
+          onClick={(e) => {
+            e.stopPropagation();
+            setStartOpen((v) => !v);
+          }}
+          style={{
+            fontWeight: "bold",
+            fontSize: 12,
+            padding: "2px 10px",
+            height: 24,
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
+          }}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={StartLogo()} alt="" width={20} height={16} style={{ imageRendering: "pixelated" }} />
+          Start
+        </button>
+
+        {windows.map((w) => (
+          <div
+            key={w.id}
+            className={`taskbar-item ${!w.minimized ? "active" : ""}`}
+            onClick={() => focusWindow(w.id)}
+            title={w.title}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={w.icon} alt="" />
+            <span>{w.title}</span>
+          </div>
+        ))}
+
+        <div className="taskbar-clock" title="System clock">{clock}</div>
+      </div>
+
+      {/* Start menu */}
+      {startOpen && (
+        <div className="start-menu" onClick={(e) => e.stopPropagation()}>
+          <div className="start-menu-sidebar">anthhub 98</div>
+          <div className="start-menu-items">
+            {categoryKeys.map((k) => (
+              <div
+                key={k}
+                className="start-menu-item"
+                onClick={() => openWindow({ type: "category", key: k })}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={FolderIcon(categoryFolderColor[k] ?? "#f4d76b")} alt="" />
+                {k}
+              </div>
+            ))}
+            <div className="start-menu-sep" />
+            <div className="start-menu-item" onClick={() => openWindow({ type: "readme" })}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={DocIcon("#888")} alt="" />
+              README.txt
+            </div>
+            <div
+              className="start-menu-item"
+              onClick={() => window.open("https://github.com/anthhub", "_blank")}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={GithubIcon()} alt="" />
+              GitHub...
+            </div>
+            <div className="start-menu-item" onClick={() => openWindow({ type: "about" })}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={ComputerIcon()} alt="" />
+              About anthhub.exe
+            </div>
+            <div className="start-menu-sep" />
+            <div
+              className="start-menu-item"
+              onClick={() => {
+                setScanlines((v) => !v);
+                setStartOpen(false);
+              }}
+            >
+              📺 CRT scanlines ({scanlines ? "ON" : "OFF"})
+            </div>
+            <div
+              className="start-menu-item"
+              onClick={() => {
+                if (confirm("Really shut down? (just reloads the page)")) location.reload();
+              }}
+            >
+              ⏻ Shut Down...
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ============== subcomponents ==============
+
+function DesktopIcon({
+  label,
+  src,
+  selected,
+  onSelect,
+  onOpen,
+}: {
+  label: string;
+  src: string;
+  selected: boolean;
+  onSelect: (e: React.MouseEvent) => void;
+  onOpen: () => void;
+}) {
+  const lastClickRef = { current: 0 } as { current: number };
+  return (
+    <div
+      className={`desktop-icon ${selected ? "selected" : ""}`}
+      onClick={(e) => {
+        onSelect(e);
+        const now = Date.now();
+        if (now - lastClickRef.current < 350) onOpen();
+        lastClickRef.current = now;
+      }}
+      onDoubleClick={onOpen}
+      title={`Double-click to open ${label}`}
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={src} alt="" className="desktop-icon-img" />
+      <div className="desktop-icon-label">{label}</div>
+    </div>
+  );
+}
+
+function WindowContent({
+  kind,
+  data,
+  onOpenRepo,
+}: {
+  kind: WindowKind;
+  data: Categories;
+  onOpenRepo: (r: Repo) => void;
+}) {
+  if (kind.type === "category") {
+    const items = data[kind.key] || [];
+    return (
+      <div className="window-body" style={{ background: "#fff", padding: 0 }}>
+        <div style={{ background: "#c0c0c0", padding: "6px 8px", borderBottom: "1px solid #808080" }}>
+          <div style={{ fontSize: 11, color: "#000" }}>
+            {items.length} object(s) · Click twice to open a project
+          </div>
+        </div>
+        <div style={{ padding: 4 }}>
+          {items.map((repo) => (
+            <div
+              key={repo.name}
+              className="project-row"
+              onDoubleClick={() => onOpenRepo(repo)}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={DocIcon("#4a6cd4")} alt="" className="project-icon" />
+              <div className="project-meta">
+                <div className="project-name">{repo.name}</div>
+                <div className="project-desc">
+                  {(repo.desc[0] || "").slice(0, 120)}
+                  {repo.desc[0] && repo.desc[0].length > 120 ? "…" : ""}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (kind.type === "repo") {
+    const r = kind.repo;
+    return (
+      <div className="window-body">
+        <div className="readme-scroll">
+          <div style={{ fontWeight: "bold", fontSize: 14, marginBottom: 6 }}>{r.name}</div>
+          <ul>
+            {r.desc.map((d, i) => (
+              <li key={i}>{d}</li>
+            ))}
+          </ul>
+          <div style={{ marginTop: 10 }}>
+            {r.tags.map((t) => (
+              <span key={t} className="tag-chip">
+                {t}
+              </span>
+            ))}
+          </div>
+        </div>
+        <div style={{ marginTop: 8, display: "flex", gap: 6, justifyContent: "flex-end" }}>
+          {r.github && (
+            <button onClick={() => window.open(r.github, "_blank")}>Open in GitHub</button>
+          )}
+          {r.url && r.url !== r.github && (
+            <button onClick={() => window.open(r.url, "_blank")}>Visit...</button>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  if (kind.type === "about") {
+    return (
+      <div className="window-body">
+        <div style={{ padding: 16, textAlign: "center" }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={ComputerIcon()} alt="" width={48} height={48} style={{ imageRendering: "pixelated", marginBottom: 12 }} />
+          <div style={{ fontWeight: "bold", fontSize: 14 }}>anthhub.exe</div>
+          <div style={{ fontSize: 12, marginTop: 4 }}>Version 2026.04 (build 98)</div>
+          <div style={{ fontSize: 11, color: "#444", marginTop: 12, lineHeight: 1.5 }}>
+            Frontend / Fullstack engineer · Shanghai<br />
+            Engineering Library · VScode Plugin · Creative Application
+          </div>
+          <div
+            className="field-row"
+            style={{ justifyContent: "center", marginTop: 16 }}
+          >
+            <button onClick={() => window.open("https://github.com/anthhub", "_blank")}>
+              Visit GitHub
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // readme
+  return (
+    <div className="window-body">
+      <div className="readme-scroll" style={{ fontFamily: "Courier New, monospace" }}>
+        <pre style={{ whiteSpace: "pre-wrap", margin: 0 }}>
+{`WELCOME TO anthhub.exe
+────────────────────────────
+
+Double-click a folder on the desktop to browse projects.
+Each folder maps to a category:
+
+  🗂  Engineering Library   - open-source libs & tools
+  🗂  VScode Plugin          - editor extensions
+  🗂  Creative Application   - fun / hack / WebAssembly
+
+Tip: drag window title bars to move windows around.
+     click "Start" for the menu.
+     try "CRT scanlines" in the Start menu for full retro vibes.
+
+更多项目源码, 请移步 GitHub, 或者面基 [奸笑]...
+
+— anthhub@2026`}
+        </pre>
+      </div>
+    </div>
+  );
+}
+
+function BootScreen() {
+  return (
+    <div className="boot">
+      <div style={{ opacity: 0.7 }}>
+        <div>Starting anthhub.exe ...</div>
+        <div style={{ marginTop: 4 }}>Loading Windows 98 shell...</div>
+        <div style={{ marginTop: 4 }}>Mounting /public/const/repo.json ... OK</div>
+        <div style={{ marginTop: 4 }}>Initializing React 19 + Next 15 ... OK</div>
+        <div style={{ marginTop: 4 }}>Press any key to continue_</div>
+      </div>
+    </div>
+  );
+}

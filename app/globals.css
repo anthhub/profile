@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-ink text-soft font-sans antialiased;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(255, 0, 110, 0.15), transparent),
+      radial-gradient(ellipse 60% 40% at 80% 30%, rgba(131, 56, 236, 0.1), transparent),
+      radial-gradient(ellipse 60% 40% at 20% 60%, rgba(0, 245, 255, 0.08), transparent),
+      #0d1117;
+    background-attachment: fixed;
+  }
+  ::selection {
+    @apply bg-magenta/30 text-soft;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    background: linear-gradient(90deg, #ff006e, #8338ec, #00f5ff, #ff006e);
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .glow-pink {
+    box-shadow: 0 0 40px rgba(255, 0, 110, 0.35);
+  }
+  .glow-cyan {
+    box-shadow: 0 0 40px rgba(0, 245, 255, 0.35);
+  }
+  .grain::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.035;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' /%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' /%3E%3C/svg%3E");
+    z-index: 1000;
+  }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #0d1117;
+}
+::-webkit-scrollbar-thumb {
+  background: #ff006e40;
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #ff006e80;
+}

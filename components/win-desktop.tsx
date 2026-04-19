@@ -233,6 +233,7 @@ export default function WinDesktop({ data }: { data: Categories }) {
         },
       ];
       if (firstCat) {
+        // Featured on top
         items.push({
           id: `cat-${firstCat}`,
           title: firstCat,
@@ -242,11 +243,11 @@ export default function WinDesktop({ data }: { data: Categories }) {
           y: y0 + 20,
           w: cw,
           h: ch,
-          z: 101,
+          z: 102,
         });
       }
       setWindows(items);
-      setZCounter(102);
+      setZCounter(103);
       return;
     }
 
@@ -275,17 +276,41 @@ export default function WinDesktop({ data }: { data: Categories }) {
     const baseX = Math.max(16, Math.round((vw - maxX) / 2));
     const baseY = Math.max(16, Math.round((vh - 32 - maxY) / 2));
 
+    // Cascade order (back → front): ARCADE → WANTED → README → Featured · AI
+    // Featured · AI is the hero, so it gets the highest z AND the front-most slot
     const items: OpenWindow[] = [
+      {
+        id: "arcade",
+        title: "ARCADE.exe — Skill Fighter",
+        icon: ArcadeIcon(),
+        kind: { type: "arcade" },
+        x: baseX,
+        y: baseY,
+        w: arcadeW,
+        h: arcadeH,
+        z: 100,
+      },
+      {
+        id: "wanted",
+        title: "WANTED.exe",
+        icon: WantedIcon(),
+        kind: { type: "wanted" },
+        x: baseX + offX,
+        y: baseY + offY,
+        w: wantedW,
+        h: wantedH,
+        z: 101,
+      },
       {
         id: "readme",
         title: "README.txt",
         icon: DocIcon("#888"),
         kind: { type: "readme" },
-        x: baseX,
-        y: baseY,
+        x: baseX + offX * 2,
+        y: baseY + offY * 2,
         w: readmeW,
         h: readmeH,
-        z: 100,
+        z: 102,
       },
     ];
     if (firstCat) {
@@ -294,35 +319,13 @@ export default function WinDesktop({ data }: { data: Categories }) {
         title: firstCat,
         icon: FolderIcon(categoryFolderColor[firstCat] ?? "#f4d76b"),
         kind: { type: "category", key: firstCat },
-        x: baseX + offX,
-        y: baseY + offY,
+        x: baseX + offX * 3,
+        y: baseY + offY * 3,
         w: catW,
         h: catH,
-        z: 101,
+        z: 103,
       });
     }
-    items.push({
-      id: "wanted",
-      title: "WANTED.exe",
-      icon: WantedIcon(),
-      kind: { type: "wanted" },
-      x: baseX + offX * 2,
-      y: baseY + offY * 2,
-      w: wantedW,
-      h: wantedH,
-      z: 102,
-    });
-    items.push({
-      id: "arcade",
-      title: "ARCADE.exe — Skill Fighter",
-      icon: ArcadeIcon(),
-      kind: { type: "arcade" },
-      x: baseX + offX * 3,
-      y: baseY + offY * 3,
-      w: arcadeW,
-      h: arcadeH,
-      z: 103,
-    });
     setWindows(items);
     setZCounter(104);
   }, [booted, data]);

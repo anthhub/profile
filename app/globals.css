@@ -2983,3 +2983,47 @@ body {
   background-position: center;
   image-rendering: pixelated;
 }
+
+/* Featured AI folder — standout badge + glowing icon */
+.desktop-icon-img-wrap {
+  position: relative;
+  display: inline-block;
+  line-height: 0;
+}
+.desktop-icon.has-badge .desktop-icon-img {
+  filter: drop-shadow(0 0 6px rgba(255, 45, 149, 0.75));
+}
+.desktop-icon-badge {
+  position: absolute;
+  top: -6px;
+  right: -10px;
+  background: #ff2d95;
+  color: #fff;
+  font-family: "Press Start 2P", monospace;
+  font-size: 8px;
+  letter-spacing: 1px;
+  padding: 2px 5px;
+  border: 1px solid #000;
+  box-shadow:
+    0 0 6px #ff2d95,
+    2px 2px 0 rgba(0, 0, 0, 0.5);
+  transform: rotate(8deg);
+  animation: newBadgeBob 1.6s ease-in-out infinite;
+  z-index: 2;
+}
+@keyframes newBadgeBob {
+  0%, 100% { transform: rotate(8deg) translateY(0); }
+  50%      { transform: rotate(-6deg) translateY(-2px); }
+}
+
+/* Featured category window — subtle pink border glow */
+.win-frame:has(.project-row.featured) {
+  box-shadow: 0 0 0 1px rgba(255, 45, 149, 0.5), 0 0 24px rgba(255, 45, 149, 0.15);
+}
+.project-row.featured {
+  border-left: 3px solid #ff2d95;
+  padding-left: 10px;
+}
+.project-row.featured .project-name::after {
+  content: " ✨";
+}

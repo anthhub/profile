@@ -1,4 +1,73 @@
 {
+    "Featured · AI": [
+        {
+            "name": "Vistory",
+            "url": "https://vistory.vercel.app",
+            "desc": [
+                "AI 故事绘本 / 视频创作平台",
+                "支持 nano-banana、Sora 等多模态模型",
+                "覆盖脚本 → 分镜 → 画面 → 视频合成全链路",
+                "FFmpeg-wasm 浏览器内导出",
+                "React + TypeScript + LLM Tool calling"
+            ],
+            "github": "https://vistory.vercel.app",
+            "tags": [
+                "AI",
+                "video",
+                "nano-banana",
+                "Sora",
+                "LLM",
+                "tool-calling",
+                "FFmpeg-wasm",
+                "multimodal"
+            ]
+        },
+        {
+            "name": "Hollideo",
+            "url": "https://hollideo.vercel.app",
+            "desc": [
+                "两天复刻 Agent + Subagent + Skill + Tool 多 Agent 协作",
+                "基于 LangGraph + Tool-calling 的多 Agent 路由",
+                "自动生产剧本 / 图片 / 场景",
+                "Next.js 全栈实现"
+            ],
+            "github": "https://hollideo.vercel.app",
+            "tags": [
+                "AI",
+                "Agent",
+                "LangGraph",
+                "multi-agent",
+                "tool-calling",
+                "Next.js",
+                "AI-video"
+            ]
+        },
+        {
+            "name": "chatcut-replica",
+            "url": "https://github.com/anthhub/chatcut-replica",
+            "desc": [
+                "业余两天复刻 ChatCut Web 端架构；验证 Dockview + Rocicorp Zero + Remotion + xstate 组合",
+                "Canvas 多轨时间轴 + WebGL shader 转场",
+                "基于转录稿的剪辑工作流",
+                "xstate 驱动的上传 / 转码 / 转录 pipeline",
+                "mediabunny 浏览器内 VP9 转码",
+                "Hono + Socket.IO + BullMQ 后端骨架"
+            ],
+            "github": "https://github.com/anthhub/chatcut-replica",
+            "tags": [
+                "video-editor",
+                "Dockview",
+                "Rocicorp-Zero",
+                "Remotion",
+                "xstate",
+                "WebGL",
+                "mediabunny",
+                "Hono",
+                "Socket.IO",
+                "BullMQ"
+            ]
+        }
+    ],
     "Engineering Library": [
         {
             "name": "Matrox",

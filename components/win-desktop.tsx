@@ -69,13 +69,16 @@ type OpenWindow = {
 };
 
 const categoryFolderColor: Record<string, string> = {
+  "Featured · AI": "#ff2d95",
   "Engineering Library": "#f4d76b",
   "VScode Plugin": "#6ad0f4",
   "Creative Application": "#f29abb",
 };
+const FEATURED_CATEGORY = "Featured · AI";
 
 const clippyMessages = [
   "👋 Hi! I'm Clippy. Double-click any folder to see projects!",
+  "🔥 Start with \"Featured · AI\" — Vistory, Hollideo, chatcut-replica (all live!)",
   "💡 Tip: Engineering Library has my open-source libs (Matrox, Forwarder…)",
   "🧩 VScode Plugin → editor extensions I published to the marketplace",
   "🎨 Creative Application → fun Web / WASM experiments",
@@ -623,6 +626,7 @@ export default function WinDesktop({ data }: { data: Categories }) {
               src={icon.img}
               selected={selectedIcon === icon.id}
               pulse={highlightIcons && idx < 3}
+              badge={icon.label === FEATURED_CATEGORY ? "NEW" : undefined}
               onSelect={(e) => {
                 e.stopPropagation();
                 setSelectedIcon(icon.id);
@@ -977,6 +981,7 @@ function DesktopIcon({
   src,
   selected,
   pulse,
+  badge,
   onSelect,
   onOpen,
 }: {
@@ -984,13 +989,14 @@ function DesktopIcon({
   src: string;
   selected: boolean;
   pulse?: boolean;
+  badge?: string;
   onSelect: (e: React.MouseEvent) => void;
   onOpen: () => void;
 }) {
   const lastClickRef = { current: 0 } as { current: number };
   return (
     <div
-      className={`desktop-icon ${selected ? "selected" : ""} ${pulse ? "pulse" : ""}`}
+      className={`desktop-icon ${selected ? "selected" : ""} ${pulse ? "pulse" : ""} ${badge ? "has-badge" : ""}`}
       onClick={(e) => {
         onSelect(e);
         const now = Date.now();
@@ -1000,8 +1006,11 @@ function DesktopIcon({
       onDoubleClick={onOpen}
       title={`Double-click to open ${label}`}
     >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={src} alt="" className="desktop-icon-img" />
+      <div className="desktop-icon-img-wrap">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={src} alt="" className="desktop-icon-img" />
+        {badge && <span className="desktop-icon-badge">{badge}</span>}
+      </div>
       <div className="desktop-icon-label">{label}</div>
     </div>
   );
@@ -1041,11 +1050,15 @@ function WindowContent({
           {items.map((repo) => (
             <div
               key={repo.name}
-              className="project-row"
+              className={`project-row ${kind.key === "Featured · AI" ? "featured" : ""}`}
               onDoubleClick={() => onOpenRepo(repo)}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={DocIcon("#4a6cd4")} alt="" className="project-icon" />
+              <img
+                src={DocIcon(kind.key === "Featured · AI" ? "#ff2d95" : "#4a6cd4")}
+                alt=""
+                className="project-icon"
+              />
               <div className="project-meta">
                 <div className="project-name">{repo.name}</div>
                 <div className="project-desc">

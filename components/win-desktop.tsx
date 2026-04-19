@@ -163,10 +163,10 @@ export default function WinDesktop({ data }: { data: Categories }) {
 
     // ---- Tablet: README + first category, cascaded centered ----
     if (isTablet) {
-      const rw = 420;
-      const rh = 320;
-      const cw = 480;
-      const ch = 380;
+      const rw = Math.min(560, vw - 40);
+      const rh = 360;
+      const cw = Math.min(620, vw - 40);
+      const ch = 440;
       const totalW = cw + 28;
       const totalH = ch + 20;
       const x0 = Math.max(16, Math.round((vw - totalW) / 2));
@@ -203,19 +203,21 @@ export default function WinDesktop({ data }: { data: Categories }) {
     }
 
     // ---- Desktop: 4 windows centered as a cascade (stairs) ----
-    // Target widest window governs the bounding box
-    const readmeW = 420;
-    const readmeH = 300;
-    const catW = 520;
-    const catH = 380;
-    const wantedW = 520;
-    const wantedH = 500;
-    const arcadeW = 640;
-    const arcadeH = 460;
+    // Clamp to viewport so even on 1100px we don't overflow
+    const capW = vw - 40;
+    const capH = vh - 120;
+    const readmeW = Math.min(520, capW);
+    const readmeH = Math.min(380, capH);
+    const catW = Math.min(640, capW);
+    const catH = Math.min(480, capH);
+    const wantedW = Math.min(640, capW);
+    const wantedH = Math.min(620, capH);
+    const arcadeW = Math.min(820, capW);
+    const arcadeH = Math.min(620, capH);
 
     // Cascade offsets
-    const offX = 36;
-    const offY = 28;
+    const offX = 42;
+    const offY = 34;
 
     // Compute bounding box that contains all 4 windows
     const maxX = Math.max(readmeW, catW + offX, wantedW + offX * 2, arcadeW + offX * 3);

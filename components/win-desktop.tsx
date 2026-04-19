@@ -129,24 +129,110 @@ export default function WinDesktop({ data }: { data: Categories }) {
     return () => clearTimeout(t);
   }, [booted]);
 
-  // Auto-open welcome windows so content is visible at first glance
+  // Auto-open welcome windows so content is visible at first glance.
+  // Cascade layout: 4 windows on desktop, 2 on tablet, 1 on phone.
   useEffect(() => {
     if (!booted) return;
+    const vw = typeof window !== "undefined" ? window.innerWidth : 1280;
+    const vh = typeof window !== "undefined" ? window.innerHeight : 800;
+    const isPhone = vw < 640;
+    const isTablet = vw >= 640 && vw < 1100;
     const firstCat = Object.keys(data)[0];
-    const base = typeof window !== "undefined" ? window.innerWidth : 1280;
-    const isMobile = base < 820;
-    const readmeW = isMobile ? Math.min(360, base - 24) : 440;
-    const readmeH = isMobile ? 300 : 340;
-    const catW = isMobile ? Math.min(360, base - 24) : 560;
-    const catH = isMobile ? 320 : 420;
+
+    // ---- Phone: one welcome window, full-width, on top ----
+    if (isPhone) {
+      const w = Math.min(360, vw - 24);
+      const h = 320;
+      const items: OpenWindow[] = [
+        {
+          id: "readme",
+          title: "README.txt",
+          icon: DocIcon("#888"),
+          kind: { type: "readme" },
+          x: Math.round((vw - w) / 2),
+          y: 16,
+          w,
+          h,
+          z: 100,
+        },
+      ];
+      setWindows(items);
+      setZCounter(101);
+      return;
+    }
+
+    // ---- Tablet: README + first category, cascaded centered ----
+    if (isTablet) {
+      const rw = 420;
+      const rh = 320;
+      const cw = 480;
+      const ch = 380;
+      const totalW = cw + 28;
+      const totalH = ch + 20;
+      const x0 = Math.max(16, Math.round((vw - totalW) / 2));
+      const y0 = Math.max(16, Math.round((vh - 32 - totalH) / 2));
+      const items: OpenWindow[] = [
+        {
+          id: "readme",
+          title: "README.txt",
+          icon: DocIcon("#888"),
+          kind: { type: "readme" },
+          x: x0,
+          y: y0,
+          w: rw,
+          h: rh,
+          z: 100,
+        },
+      ];
+      if (firstCat) {
+        items.push({
+          id: `cat-${firstCat}`,
+          title: firstCat,
+          icon: FolderIcon(categoryFolderColor[firstCat] ?? "#f4d76b"),
+          kind: { type: "category", key: firstCat },
+          x: x0 + 28,
+          y: y0 + 20,
+          w: cw,
+          h: ch,
+          z: 101,
+        });
+      }
+      setWindows(items);
+      setZCounter(102);
+      return;
+    }
+
+    // ---- Desktop: 4 windows centered as a cascade (stairs) ----
+    // Target widest window governs the bounding box
+    const readmeW = 420;
+    const readmeH = 300;
+    const catW = 520;
+    const catH = 380;
+    const wantedW = 520;
+    const wantedH = 500;
+    const arcadeW = 640;
+    const arcadeH = 460;
+
+    // Cascade offsets
+    const offX = 36;
+    const offY = 28;
+
+    // Compute bounding box that contains all 4 windows
+    const maxX = Math.max(readmeW, catW + offX, wantedW + offX * 2, arcadeW + offX * 3);
+    const maxY = Math.max(readmeH, catH + offY, wantedH + offY * 2, arcadeH + offY * 3);
+
+    // Center the bounding box in the viewport (above the taskbar)
+    const baseX = Math.max(16, Math.round((vw - maxX) / 2));
+    const baseY = Math.max(16, Math.round((vh - 32 - maxY) / 2));
+
     const items: OpenWindow[] = [
       {
         id: "readme",
         title: "README.txt",
         icon: DocIcon("#888"),
         kind: { type: "readme" },
-        x: isMobile ? 12 : 80,
-        y: isMobile ? 12 : 50,
+        x: baseX,
+        y: baseY,
         w: readmeW,
         h: readmeH,
         z: 100,
@@ -158,15 +244,37 @@ export default function WinDesktop({ data }: { data: Categories }) {
         title: firstCat,
         icon: FolderIcon(categoryFolderColor[firstCat] ?? "#f4d76b"),
         kind: { type: "category", key: firstCat },
-        x: isMobile ? 12 : 80 + readmeW + 24,
-        y: isMobile ? 12 + readmeH + 12 : 90,
+        x: baseX + offX,
+        y: baseY + offY,
         w: catW,
         h: catH,
         z: 101,
       });
     }
+    items.push({
+      id: "wanted",
+      title: "WANTED.exe",
+      icon: WantedIcon(),
+      kind: { type: "wanted" },
+      x: baseX + offX * 2,
+      y: baseY + offY * 2,
+      w: wantedW,
+      h: wantedH,
+      z: 102,
+    });
+    items.push({
+      id: "arcade",
+      title: "ARCADE.exe — Skill Fighter",
+      icon: ArcadeIcon(),
+      kind: { type: "arcade" },
+      x: baseX + offX * 3,
+      y: baseY + offY * 3,
+      w: arcadeW,
+      h: arcadeH,
+      z: 103,
+    });
     setWindows(items);
-    setZCounter(101 + items.length);
+    setZCounter(104);
   }, [booted, data]);
 
   // Idle hint: if the user stops interacting for 8s, nudge them
@@ -916,14 +1024,38 @@ function Clippy({
 }
 
 function BootScreen() {
+  const logoSrc = `data:image/svg+xml;utf8,${encodeURIComponent(
+    `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 72' shape-rendering='crispEdges'>
+      <rect x='2' y='2' width='42' height='32' fill='#ff3b30'/>
+      <rect x='48' y='2' width='42' height='32' fill='#34c759'/>
+      <rect x='2' y='38' width='42' height='32' fill='#007aff'/>
+      <rect x='48' y='38' width='42' height='32' fill='#ffcc00'/>
+      <rect x='2' y='2' width='42' height='4' fill='#fff' opacity='0.25'/>
+      <rect x='48' y='2' width='42' height='4' fill='#fff' opacity='0.25'/>
+    </svg>`,
+  )}`;
   return (
     <div className="boot">
-      <div style={{ opacity: 0.7 }}>
-        <div>Starting anthhub.exe ...</div>
-        <div style={{ marginTop: 4 }}>Loading Windows 98 shell...</div>
-        <div style={{ marginTop: 4 }}>Mounting /public/const/repo.json ... OK</div>
-        <div style={{ marginTop: 4 }}>Initializing React 19 + Next 15 ... OK</div>
-        <div style={{ marginTop: 4 }}>Press any key to continue_</div>
+      <div className="boot-center">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={logoSrc} alt="anthhub" className="boot-logo-img" />
+        <div className="boot-title">anthhub.exe</div>
+        <div className="boot-subtitle">
+          Microsoft<span className="boot-reg">®</span> Windows
+          <span className="boot-98">98</span>
+        </div>
+        <div className="boot-bar">
+          <div className="boot-bar-fill" />
+        </div>
+        <div className="boot-hint">Starting anthhub.exe ...</div>
+      </div>
+      <div className="boot-log">
+        <div>&gt; boot sequence initiated ...</div>
+        <div>&gt; Loading Windows 98 shell ............... OK</div>
+        <div>&gt; Mounting /public/const/repo.json ....... OK</div>
+        <div>&gt; Initializing React 19 + Next 15 ........ OK</div>
+        <div>&gt; Hydrating Clippy assistant .............. OK</div>
+        <div className="boot-log-blink">&gt; Press any key to continue_</div>
       </div>
     </div>
   );

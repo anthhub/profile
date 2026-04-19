@@ -277,28 +277,202 @@ body {
   font-family: "Pixelated MS Sans Serif", Arial, sans-serif;
 }
 
-/* Boot screen */
+/* Boot screen — centered logo + title + progress bar, log strip at bottom */
 .boot {
   position: fixed;
   inset: 0;
-  background: #000;
+  background: radial-gradient(ellipse at center, #0a0a0a 0%, #000 70%);
   color: #c0c0c0;
   font-family: "Courier New", monospace;
-  padding: 20px 32px;
-  font-size: 14px;
+  font-size: 13px;
   z-index: 99999;
-}
-.boot-logo {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -60%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
+  overflow: hidden;
+  animation: bootFadeIn 0.5s ease-out;
 }
-.boot-logo img {
-  width: 280px;
+@keyframes bootFadeIn {
+  from {
+    opacity: 0;
+    filter: brightness(3);
+  }
+  to {
+    opacity: 1;
+    filter: brightness(1);
+  }
+}
+.boot::before {
+  /* subtle CRT scan lines */
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(255, 255, 255, 0.02) 0 1px,
+    transparent 1px 3px
+  );
+  z-index: 2;
+}
+.boot-center {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 460px;
+  padding: 0 20px;
+}
+.boot-logo-img {
+  width: 168px;
+  height: auto;
   image-rendering: pixelated;
-  margin-bottom: 24px;
+  filter: drop-shadow(0 0 18px rgba(255, 255, 255, 0.15));
+  animation: bootLogoPop 0.8s cubic-bezier(0.2, 1, 0.3, 1);
+}
+@keyframes bootLogoPop {
+  0% {
+    transform: scale(0.3) rotate(-10deg);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.1) rotate(2deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) rotate(0);
+    opacity: 1;
+  }
+}
+.boot-title {
+  margin-top: 20px;
+  font-family: "Cinzel", "Playfair Display", serif;
+  font-size: 34px;
+  font-weight: 900;
+  letter-spacing: 4px;
+  color: #fff;
+  text-shadow: 0 0 18px rgba(255, 255, 255, 0.35);
+  animation: bootFadeUp 0.6s 0.2s ease-out both;
+}
+.boot-subtitle {
+  margin-top: 6px;
+  font-family: "Cinzel", "Times New Roman", serif;
+  font-size: 16px;
+  letter-spacing: 2px;
+  color: #d4d4d8;
+  animation: bootFadeUp 0.6s 0.4s ease-out both;
+}
+.boot-reg {
+  font-size: 9px;
+  vertical-align: super;
+  margin: 0 2px;
+  color: #a1a1aa;
+}
+.boot-98 {
+  display: inline-block;
+  font-family: "Cinzel", serif;
+  font-weight: 900;
+  color: #ffcc00;
+  margin-left: 8px;
+  text-shadow: 0 0 12px rgba(255, 204, 0, 0.6);
+}
+.boot-bar {
+  margin-top: 22px;
+  width: 260px;
+  height: 16px;
+  background: #0a0a0a;
+  border: 2px solid;
+  border-color: #666 #222 #222 #666;
+  padding: 2px;
+  animation: bootFadeUp 0.6s 0.5s ease-out both;
+}
+.boot-bar-fill {
+  height: 100%;
+  width: 0;
+  background: repeating-linear-gradient(
+    90deg,
+    #22d3ee 0 8px,
+    #0f0 8px 10px
+  );
+  box-shadow: 0 0 8px #22d3ee;
+  animation: bootBarFill 1.05s 0.55s ease-out forwards;
+}
+@keyframes bootBarFill {
+  from { width: 0; }
+  to { width: 100%; }
+}
+.boot-hint {
+  margin-top: 14px;
+  font-size: 12px;
+  color: #9ca3af;
+  letter-spacing: 2px;
+  animation: bootFadeUp 0.6s 0.7s ease-out both, bootHintBlink 1.2s 1s steps(2) infinite;
+}
+@keyframes bootFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes bootHintBlink {
+  50% {
+    opacity: 0.35;
+  }
+}
+.boot-log {
+  position: fixed;
+  left: 20px;
+  bottom: 20px;
+  z-index: 3;
+  text-align: left;
+  font-size: 11px;
+  line-height: 1.6;
+  color: #4ade80;
+  opacity: 0.85;
+  animation: bootLog 0.8s 0.3s ease-out both;
+  max-width: calc(100vw - 40px);
+}
+.boot-log > div {
+  opacity: 0;
+  animation: bootLogLine 0.3s ease-out forwards;
+}
+.boot-log > div:nth-child(1) { animation-delay: 0.3s; }
+.boot-log > div:nth-child(2) { animation-delay: 0.5s; }
+.boot-log > div:nth-child(3) { animation-delay: 0.65s; }
+.boot-log > div:nth-child(4) { animation-delay: 0.78s; }
+.boot-log > div:nth-child(5) { animation-delay: 0.88s; }
+.boot-log > div:nth-child(6) { animation-delay: 0.96s; }
+@keyframes bootLogLine {
+  from {
+    opacity: 0;
+    transform: translateX(-6px);
+  }
+  to {
+    opacity: 0.85;
+    transform: translateX(0);
+  }
+}
+@keyframes bootLog {
+  from { opacity: 0; }
+  to { opacity: 0.85; }
+}
+.boot-log-blink {
+  color: #fde047;
+  animation: bootHintBlink 0.9s steps(2) infinite !important;
+}
+
+@media (max-width: 640px) {
+  .boot-logo-img { width: 120px; }
+  .boot-title { font-size: 26px; letter-spacing: 3px; }
+  .boot-subtitle { font-size: 13px; }
+  .boot-bar { width: 220px; }
+  .boot-log { font-size: 10px; left: 10px; bottom: 10px; }
 }
 
 /* Scanlines overlay toggle */

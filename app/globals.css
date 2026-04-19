@@ -2581,15 +2581,26 @@ body {
   color: #d4d4d8;
   font-family: "Perfect DOS VGA", "Courier New", monospace;
   font-size: 13px;
-  padding: 8px 10px;
+  padding: 10px 12px;
   box-sizing: border-box;
   overflow: hidden;
   cursor: text;
+}
+/* Override 98.css / browser <pre> defaults so terminal lines aren't white-boxed */
+.term-wrap pre,
+.term-wrap .term-line {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  color: inherit;
 }
 .term-scroll {
   height: 100%;
   overflow-y: auto;
   padding-bottom: 12px;
+  background: transparent;
 }
 .term-line {
   margin: 0;

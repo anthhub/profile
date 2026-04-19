@@ -36,6 +36,15 @@ const categoryFolderColor: Record<string, string> = {
   "Creative Application": "#f29abb",
 };
 
+const clippyMessages = [
+  "👋 Hi! I'm Clippy. Double-click any folder to see projects!",
+  "💡 Tip: Engineering Library has my open-source libs (Matrox, Forwarder…)",
+  "🧩 VScode Plugin → editor extensions I published to the marketplace",
+  "🎨 Creative Application → fun Web / WASM experiments",
+  "⌨️ Press ESC to close any window. Click Start for the full menu.",
+  "📺 Want full CRT vibes? Start → \"CRT scanlines\"",
+];
+
 export default function WinDesktop({ data }: { data: Categories }) {
   const [windows, setWindows] = useState<OpenWindow[]>([]);
   const [zCounter, setZCounter] = useState(100);
@@ -44,12 +53,107 @@ export default function WinDesktop({ data }: { data: Categories }) {
   const [clock, setClock] = useState("");
   const [booted, setBooted] = useState(false);
   const [scanlines, setScanlines] = useState(false);
+  const [clippyOpen, setClippyOpen] = useState(true);
+  const [clippyMsg, setClippyMsg] = useState(0);
+  const [highlightIcons, setHighlightIcons] = useState(true);
+  const [idleHint, setIdleHint] = useState(false);
 
   // Boot screen (show for 1.2s)
   useEffect(() => {
     const t = setTimeout(() => setBooted(true), 1200);
     return () => clearTimeout(t);
   }, []);
+
+  // Cycle Clippy messages
+  useEffect(() => {
+    if (!booted) return;
+    const i = setInterval(() => setClippyMsg((n) => (n + 1) % clippyMessages.length), 5000);
+    return () => clearInterval(i);
+  }, [booted]);
+
+  // Fade the icon-pulse after 10s so it doesn't distract forever
+  useEffect(() => {
+    if (!booted) return;
+    const t = setTimeout(() => setHighlightIcons(false), 10000);
+    return () => clearTimeout(t);
+  }, [booted]);
+
+  // Auto-open welcome windows so content is visible at first glance
+  useEffect(() => {
+    if (!booted) return;
+    const firstCat = Object.keys(data)[0];
+    const base = typeof window !== "undefined" ? window.innerWidth : 1280;
+    const isMobile = base < 820;
+    const readmeW = isMobile ? Math.min(360, base - 24) : 440;
+    const readmeH = isMobile ? 300 : 340;
+    const catW = isMobile ? Math.min(360, base - 24) : 560;
+    const catH = isMobile ? 320 : 420;
+    const items: OpenWindow[] = [
+      {
+        id: "readme",
+        title: "README.txt",
+        icon: DocIcon("#888"),
+        kind: { type: "readme" },
+        x: isMobile ? 12 : 80,
+        y: isMobile ? 12 : 50,
+        w: readmeW,
+        h: readmeH,
+        z: 100,
+      },
+    ];
+    if (firstCat) {
+      items.push({
+        id: `cat-${firstCat}`,
+        title: firstCat,
+        icon: FolderIcon(categoryFolderColor[firstCat] ?? "#f4d76b"),
+        kind: { type: "category", key: firstCat },
+        x: isMobile ? 12 : 80 + readmeW + 24,
+        y: isMobile ? 12 + readmeH + 12 : 90,
+        w: catW,
+        h: catH,
+        z: 101,
+      });
+    }
+    setWindows(items);
+    setZCounter(101 + items.length);
+  }, [booted, data]);
+
+  // Idle hint: if the user stops interacting for 8s, nudge them
+  useEffect(() => {
+    if (!booted) return;
+    let t: ReturnType<typeof setTimeout>;
+    const reset = () => {
+      setIdleHint(false);
+      clearTimeout(t);
+      t = setTimeout(() => setIdleHint(true), 8000);
+    };
+    reset();
+    window.addEventListener("mousemove", reset);
+    window.addEventListener("click", reset);
+    window.addEventListener("keydown", reset);
+    return () => {
+      clearTimeout(t);
+      window.removeEventListener("mousemove", reset);
+      window.removeEventListener("click", reset);
+      window.removeEventListener("keydown", reset);
+    };
+  }, [booted]);
+
+  // ESC closes the top-most window
+  useEffect(() => {
+    if (!booted) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setWindows((ws) => {
+          if (ws.length === 0) return ws;
+          const top = ws.reduce((a, b) => (a.z > b.z ? a : b));
+          return ws.filter((w) => w.id !== top.id);
+        });
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [booted]);
 
   // Live clock
   useEffect(() => {
@@ -178,20 +282,55 @@ export default function WinDesktop({ data }: { data: Categories }) {
     <div className={scanlines ? "scanlines" : ""}>
       <div className="desktop" onClick={onDesktopClick}>
         <div className="desktop-grid">
-          {desktopIcons.map((icon) => (
+          {desktopIcons.map((icon, idx) => (
             <DesktopIcon
               key={icon.id}
               label={icon.label}
               src={icon.img}
               selected={selectedIcon === icon.id}
+              pulse={highlightIcons && idx < 3}
               onSelect={(e) => {
                 e.stopPropagation();
                 setSelectedIcon(icon.id);
               }}
-              onOpen={icon.onOpen}
+              onOpen={() => {
+                setHighlightIcons(false);
+                icon.onOpen();
+              }}
             />
           ))}
         </div>
+
+        {/* Sticky Note — pinned welcome card */}
+        <div className="sticky-note" onClick={(e) => e.stopPropagation()}>
+          <div className="sticky-tape" />
+          <div className="sticky-title">hi, i&apos;m anthhub 👋</div>
+          <div className="sticky-body">
+            frontend · fullstack · AI agent<br />
+            open-source author · 98-style nerd
+          </div>
+          <div className="sticky-hint">
+            ↖ <b>double-click</b> a folder to explore my projects
+          </div>
+          <div className="sticky-links">
+            <a
+              href="https://github.com/anthhub"
+              target="_blank"
+              rel="noreferrer"
+              onClick={(e) => e.stopPropagation()}
+            >
+              github.com/anthhub
+            </a>
+          </div>
+        </div>
+
+        {/* Idle-hint arrow (appears after inactivity) */}
+        {idleHint && (
+          <div className="idle-hint" aria-hidden>
+            <div className="idle-hint-bubble">try me! 👉</div>
+            <div className="idle-hint-arrow" />
+          </div>
+        )}
 
         {windows.map((w) => !w.minimized && (
           <Rnd
@@ -262,6 +401,15 @@ export default function WinDesktop({ data }: { data: Categories }) {
         <div className="taskbar-clock" title="System clock">{clock}</div>
       </div>
 
+      {/* Clippy-style pixel assistant */}
+      {clippyOpen && booted && (
+        <Clippy
+          message={clippyMessages[clippyMsg]}
+          onClose={() => setClippyOpen(false)}
+          onCycle={() => setClippyMsg((n) => (n + 1) % clippyMessages.length)}
+        />
+      )}
+
       {/* Start menu */}
       {startOpen && (
         <div className="start-menu" onClick={(e) => e.stopPropagation()}>
@@ -328,19 +476,21 @@ function DesktopIcon({
   label,
   src,
   selected,
+  pulse,
   onSelect,
   onOpen,
 }: {
   label: string;
   src: string;
   selected: boolean;
+  pulse?: boolean;
   onSelect: (e: React.MouseEvent) => void;
   onOpen: () => void;
 }) {
   const lastClickRef = { current: 0 } as { current: number };
   return (
     <div
-      className={`desktop-icon ${selected ? "selected" : ""}`}
+      className={`desktop-icon ${selected ? "selected" : ""} ${pulse ? "pulse" : ""}`}
       onClick={(e) => {
         onSelect(e);
         const now = Date.now();
@@ -477,6 +627,57 @@ Tip: drag window title bars to move windows around.
 
 — anthhub@2026`}
         </pre>
+      </div>
+    </div>
+  );
+}
+
+function Clippy({
+  message,
+  onClose,
+  onCycle,
+}: {
+  message: string;
+  onClose: () => void;
+  onCycle: () => void;
+}) {
+  return (
+    <div className="clippy-wrap" role="dialog" aria-label="Assistant">
+      <div className="clippy-bubble">
+        <button className="clippy-close" onClick={onClose} aria-label="Close">
+          ×
+        </button>
+        <div className="clippy-msg">{message}</div>
+        <button className="clippy-next" onClick={onCycle}>
+          Next tip →
+        </button>
+        <div className="clippy-tail" />
+      </div>
+      <div className="clippy-body" onClick={onCycle} title="Click me for another tip">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          alt="pixel assistant"
+          width={72}
+          height={72}
+          style={{ imageRendering: "pixelated" }}
+          src={`data:image/svg+xml;utf8,${encodeURIComponent(
+            `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' shape-rendering='crispEdges'>
+              <rect x='8' y='4' width='16' height='20' fill='#e8e8f0' stroke='#000'/>
+              <rect x='8' y='4' width='16' height='3' fill='#8cb4ff' stroke='#000'/>
+              <rect x='11' y='10' width='3' height='3' fill='#fff' stroke='#000'/>
+              <rect x='18' y='10' width='3' height='3' fill='#fff' stroke='#000'/>
+              <rect x='12' y='11' width='1' height='1' fill='#000'/>
+              <rect x='19' y='11' width='1' height='1' fill='#000'/>
+              <rect x='13' y='17' width='6' height='2' fill='#d65b77' stroke='#000'/>
+              <rect x='7' y='13' width='2' height='5' fill='#e8e8f0' stroke='#000'/>
+              <rect x='23' y='13' width='2' height='5' fill='#e8e8f0' stroke='#000'/>
+              <rect x='10' y='24' width='4' height='4' fill='#e8e8f0' stroke='#000'/>
+              <rect x='18' y='24' width='4' height='4' fill='#e8e8f0' stroke='#000'/>
+              <rect x='15' y='7' width='2' height='1' fill='#ff5' />
+              <rect x='14' y='8' width='4' height='1' fill='#ff5' />
+            </svg>`,
+          )}`}
+        />
       </div>
     </div>
   );
